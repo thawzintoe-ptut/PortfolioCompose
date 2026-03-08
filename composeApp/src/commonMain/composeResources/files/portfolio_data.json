@@ -1,0 +1,92 @@
+{
+  "profile": {
+    "name": "Your Name",
+    "title": "Senior Software Engineer",
+    "subtitle": "20 Years · Android · Multiplatform · Kotlin",
+    "bio": "TODO: Replace with your personal bio. I'm a passionate software engineer with 20 years of experience building high-quality mobile and multiplatform applications. I love clean architecture, great UX, and shipping products that make a difference.",
+    "email": "TODO@youremail.com",
+    "github": "https://github.com/yourusername",
+    "linkedin": "https://linkedin.com/in/yourusername"
+  },
+  "stats": [
+    { "label": "Years", "value": "20+" },
+    { "label": "Projects", "value": "50+" },
+    { "label": "Companies", "value": "8" }
+  ],
+  "skills": [
+    { "id": "sk1", "name": "Kotlin", "category": "Language", "iconName": "kotlin" },
+    { "id": "sk2", "name": "Jetpack Compose", "category": "UI", "iconName": "compose" },
+    { "id": "sk3", "name": "Compose Multiplatform", "category": "UI", "iconName": "cmp" },
+    { "id": "sk4", "name": "Android SDK", "category": "Platform", "iconName": "android" },
+    { "id": "sk5", "name": "Coroutines / Flow", "category": "Async", "iconName": "coroutines" },
+    { "id": "sk6", "name": "Ktor", "category": "Network", "iconName": "ktor" },
+    { "id": "sk7", "name": "Room / SQLDelight", "category": "Database", "iconName": "database" },
+    { "id": "sk8", "name": "Hilt / Koin", "category": "DI", "iconName": "di" },
+    { "id": "sk9", "name": "TODO: Skill 9", "category": "TODO", "iconName": "placeholder" },
+    { "id": "sk10", "name": "TODO: Skill 10", "category": "TODO", "iconName": "placeholder" },
+    { "id": "sk11", "name": "TODO: Skill 11", "category": "TODO", "iconName": "placeholder" },
+    { "id": "sk12", "name": "TODO: Skill 12", "category": "TODO", "iconName": "placeholder" }
+  ],
+  "projects": [
+    {
+      "id": "p1",
+      "title": "TODO: Project Alpha",
+      "description": "TODO: Describe what this project does, the problem it solves, and the tech stack used.",
+      "tags": ["Kotlin", "Compose", "Android"],
+      "imageUrl": "",
+      "githubUrl": "https://github.com/yourusername/project-alpha",
+      "liveUrl": ""
+    },
+    {
+      "id": "p2",
+      "title": "TODO: Project Beta",
+      "description": "TODO: Describe what this project does, the problem it solves, and the tech stack used.",
+      "tags": ["KMP", "iOS", "Android"],
+      "imageUrl": "",
+      "githubUrl": "https://github.com/yourusername/project-beta",
+      "liveUrl": ""
+    },
+    {
+      "id": "p3",
+      "title": "TODO: Project Gamma",
+      "description": "TODO: Describe what this project does, the problem it solves, and the tech stack used.",
+      "tags": ["Ktor", "Backend", "API"],
+      "imageUrl": "",
+      "githubUrl": "https://github.com/yourusername/project-gamma",
+      "liveUrl": ""
+    }
+  ],
+  "experiences": [
+    {
+      "id": "e1",
+      "company": "TODO: Company Name",
+      "role": "Senior Android Engineer",
+      "duration": "20XX – Present",
+      "achievements": [
+        "TODO: Add a key achievement or responsibility here.",
+        "TODO: Add another achievement — quantify results when possible.",
+        "TODO: Add a third achievement."
+      ]
+    },
+    {
+      "id": "e2",
+      "company": "TODO: Previous Company",
+      "role": "Android Engineer",
+      "duration": "20XX – 20XX",
+      "achievements": [
+        "TODO: Achievement at this company.",
+        "TODO: Another achievement."
+      ]
+    },
+    {
+      "id": "e3",
+      "company": "TODO: Earlier Company",
+      "role": "Mobile Developer",
+      "duration": "20XX – 20XX",
+      "achievements": [
+        "TODO: Achievement at this company.",
+        "TODO: Another achievement."
+      ]
+    }
+  ]
+}
