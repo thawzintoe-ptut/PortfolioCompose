@@ -34,7 +34,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ptut.portfolio.data.model.PortfolioData
 import com.ptut.portfolio.ui.about.AboutScreen
+import com.ptut.portfolio.ui.contact.ContactScreen
+import com.ptut.portfolio.ui.experience.ExperienceScreen
 import com.ptut.portfolio.ui.hero.HeroScreen
+import com.ptut.portfolio.ui.projects.ProjectsScreen
+import com.ptut.portfolio.ui.skills.SkillsScreen
 import com.ptut.portfolio.util.WindowWidthClass
 import kotlinx.serialization.Serializable
 
@@ -101,10 +105,30 @@ fun AdaptivePortfolioApp(
                     windowWidthClass = windowWidthClass,
                 )
             }
-            composable<Screen.Skills> { ComingSoon("Skills") }
-            composable<Screen.Projects> { ComingSoon("Projects") }
-            composable<Screen.Experience> { ComingSoon("Experience") }
-            composable<Screen.Contact> { ComingSoon("Contact") }
+            composable<Screen.Skills> {
+                SkillsScreen(
+                    portfolioData = portfolioData,
+                    windowWidthClass = windowWidthClass,
+                )
+            }
+            composable<Screen.Projects> {
+                ProjectsScreen(
+                    portfolioData = portfolioData,
+                    windowWidthClass = windowWidthClass,
+                )
+            }
+            composable<Screen.Experience> {
+                ExperienceScreen(
+                    portfolioData = portfolioData,
+                    windowWidthClass = windowWidthClass,
+                )
+            }
+            composable<Screen.Contact> {
+                ContactScreen(
+                    portfolioData = portfolioData,
+                    windowWidthClass = windowWidthClass,
+                )
+            }
         }
     }
 
