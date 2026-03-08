@@ -36,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -53,6 +54,7 @@ fun HeroScreen(
     onToggleTheme: () -> Unit,
     isDark: Boolean = true,
 ) {
+    val uriHandler = LocalUriHandler.current
     val name = portfolioData?.profile?.name ?: "Your Name"
     val title = portfolioData?.profile?.title ?: "Senior Software Engineer"
     val github = portfolioData?.profile?.github ?: ""
@@ -171,7 +173,7 @@ fun HeroScreen(
             // Social links
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (github.isNotEmpty()) {
-                    IconButton(onClick = { /* TODO: open github URL */ }) {
+                    IconButton(onClick = { uriHandler.openUri(github) }) {
                         Text(
                             text = "GH",
                             style = MaterialTheme.typography.labelMedium,
@@ -180,7 +182,7 @@ fun HeroScreen(
                     }
                 }
                 if (linkedin.isNotEmpty()) {
-                    IconButton(onClick = { /* TODO: open linkedin URL */ }) {
+                    IconButton(onClick = { uriHandler.openUri(linkedin) }) {
                         Text(
                             text = "LI",
                             style = MaterialTheme.typography.labelMedium,
