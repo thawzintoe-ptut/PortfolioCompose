@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   validate-common:
-    name: Validate Common Logic
+    name: Common Logic Validation
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,7 +25,7 @@ jobs:
         run: ./gradlew :composeApp:allTests
 
   check-android:
-    name: Android Checks
+    name: Android Build Verification
     needs: validate-common
     runs-on: ubuntu-latest
     steps:
@@ -36,11 +36,11 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
           cache: 'gradle'
-      - name: Assemble Debug APK
+      - name: Build Debug APK
         run: ./gradlew :composeApp:assembleDebug
 
   check-ios:
-    name: iOS Checks
+    name: iOS Build Verification
     needs: validate-common
     runs-on: macos-latest
     steps:
@@ -51,17 +51,16 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
           cache: 'gradle'
-      - name: Cache Kotlin Native (Konan)
+      - name: Cache Kotlin Native
         uses: actions/cache@v4
         with:
           path: ~/.konan
           key: ${{ runner.os }}-konan-${{ hashFiles('**/*.gradle.kts') }}
-          restore-keys: ${{ runner.os }}-konan-
-      - name: Build iOS Framework
+      - name: Compile iOS Framework
         run: ./gradlew :composeApp:embedAndSignAppleFrameworkForXcode
 
-  check-desktop-web:
-    name: Desktop & Web Checks
+  check-desktop:
+    name: Desktop Build Verification
     needs: validate-common
     runs-on: ubuntu-latest
     steps:
@@ -72,7 +71,20 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
           cache: 'gradle'
-      - name: Build Desktop (JVM)
+      - name: Build JVM Resources
         run: ./gradlew :composeApp:jvmProcessResources
+
+  check-web:
+    name: Web Build Verification
+    needs: validate-common
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+          cache: 'gradle'
       - name: Build Web (Wasm)
         run: ./gradlew :composeApp:wasmJsBrowserDistribution
