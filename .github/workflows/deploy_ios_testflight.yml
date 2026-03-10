@@ -25,7 +25,7 @@ jobs:
           key: ${{ runner.os }}-konan-${{ hashFiles('**/*.gradle.kts') }}
 
       - name: Build iOS Framework
-        run: ./gradlew :composeApp:embedAndSignAppleFrameworkForXcode
+        run: ./gradlew :composeApp:linkReleaseFrameworkIosArm64
 
       # Full iOS build and upload requires P12 and Mobile Provisioning Profile in Secrets
       # Using standard fastlane/ios-build-action setup (Placeholder for your secrets)

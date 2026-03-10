@@ -94,6 +94,6 @@ jobs:
           key: ${{ runner.os }}-konan-${{ hashFiles('**/*.gradle.kts') }}
           restore-keys: ${{ runner.os }}-konan-
       - name: Build iOS Framework
-        run: ./gradlew :composeApp:embedAndSignAppleFrameworkForXcode
+        run: ./gradlew :composeApp:linkReleaseFrameworkIosArm64
       # In a real environment, you'd add steps to sign and build the .ipa
       # using secrets and yukiarrr/ios-build-action

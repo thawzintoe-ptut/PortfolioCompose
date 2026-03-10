@@ -57,7 +57,7 @@ jobs:
           path: ~/.konan
           key: ${{ runner.os }}-konan-${{ hashFiles('**/*.gradle.kts') }}
       - name: Compile iOS Framework
-        run: ./gradlew :composeApp:embedAndSignAppleFrameworkForXcode
+        run: ./gradlew :composeApp:linkDebugFrameworkIosSimulatorArm64
 
   check-desktop:
     name: Desktop Build Verification
