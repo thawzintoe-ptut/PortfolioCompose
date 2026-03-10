@@ -2,29 +2,33 @@ package com.ptut.portfolio.ui.contact
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Link
-import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.ptut.portfolio.data.model.PortfolioData
 import com.ptut.portfolio.theme.PortfolioColors
@@ -54,104 +58,103 @@ fun ContactScreen(
 
         item {
             Text(
-                text = "Feel free to reach out via any of the channels below.",
-                style = MaterialTheme.typography.bodyLarge,
+                text = "Let's build something great together.",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = PortfolioColors.Primary,
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = "Reach out via any of the channels below.",
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
 
         item {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                profile?.email?.let { email ->
-                    if (email.isNotEmpty() && !email.startsWith("TODO")) {
-                        ContactCard(
-                            icon = Icons.Default.Email,
-                            label = "Email",
-                            value = email,
-                            onAction = { uriHandler.openUri("mailto:$email") },
-                            actionDescription = "Send email",
+            ElevatedCard(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.elevatedCardColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                ),
+            ) {
+                Column {
+                    val items = buildList {
+                        profile?.email?.takeIf { it.isNotEmpty() && !it.startsWith("TODO") }?.let {
+                            add(Triple(Icons.Default.Email, "Email", it) to { uriHandler.openUri("mailto:$it") })
+                        }
+                        profile?.github?.takeIf { it.isNotEmpty() }?.let {
+                            add(Triple(Icons.Default.Link, "GitHub", it) to { uriHandler.openUri(it) })
+                        }
+                        profile?.linkedin?.takeIf { it.isNotEmpty() }?.let {
+                            add(Triple(Icons.Default.Person, "LinkedIn", it) to { uriHandler.openUri(it) })
+                        }
+                    }
+
+                    if (items.isEmpty()) {
+                        Text(
+                            text = "Add your contact info to portfolio_data.json",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(20.dp),
                         )
                     }
-                }
 
-                profile?.github?.let { github ->
-                    if (github.isNotEmpty()) {
-                        ContactCard(
-                            icon = Icons.Default.Link,
-                            label = "GitHub",
-                            value = github,
-                            onAction = { uriHandler.openUri(github) },
-                            actionDescription = "Open GitHub",
+                    items.forEachIndexed { index, (iconLabelValue, action) ->
+                        val (icon, label, value) = iconLabelValue
+                        ContactListItem(
+                            icon = icon,
+                            label = label,
+                            value = value,
+                            onAction = action,
+                            actionDescription = "Open $label",
                         )
-                    }
-                }
-
-                profile?.linkedin?.let { linkedin ->
-                    if (linkedin.isNotEmpty()) {
-                        ContactCard(
-                            icon = Icons.Default.Person,
-                            label = "LinkedIn",
-                            value = linkedin,
-                            onAction = { uriHandler.openUri(linkedin) },
-                            actionDescription = "Open LinkedIn",
-                        )
+                        if (index < items.lastIndex) {
+                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                        }
                     }
                 }
             }
         }
 
-        if (profile == null) {
-            item {
-                Text(
-                    text = "Add your contact info to portfolio_data.json",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
+        item { Spacer(Modifier.height(8.dp)) }
     }
 }
 
 @Composable
-private fun ContactCard(
+private fun ContactListItem(
     icon: ImageVector,
     label: String,
     value: String,
     onAction: () -> Unit,
     actionDescription: String,
 ) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-        ),
-    ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
+    ListItem(
+        headlineContent = {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        },
+        supportingContent = {
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        },
+        leadingContent = {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
                 tint = PortfolioColors.Primary,
-                modifier = Modifier.size(24.dp),
             )
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = label,
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Text(
-                    text = value,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-            }
-
+        },
+        trailingContent = {
             IconButton(onClick = onAction) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.OpenInNew,
@@ -159,6 +162,7 @@ private fun ContactCard(
                     tint = PortfolioColors.Primary,
                 )
             }
-        }
-    }
+        },
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+    )
 }
