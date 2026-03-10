@@ -1,95 +1,54 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop (JVM), Server.
+# PortfolioCompose
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+A modern, responsive, and adaptive personal portfolio application built with **Compose Multiplatform**. This project showcases a single-codebase approach to building high-quality UIs for **Android**, **iOS**, **Desktop (JVM)**, and **Web (Wasm/JS)**.
 
-* [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+## 🏗️ Architecture
 
-* [/server](./server/src/main/kotlin) is for the Ktor server application.
+The project follows a multi-module Kotlin Multiplatform (KMP) architecture:
 
-* [/shared](./shared/src) is for the code that will be shared between all targets in the project.
-  The most important subfolder is [commonMain](./shared/src/commonMain/kotlin). If preferred, you
-  can add code to the platform-specific folders here too.
+*   **`composeApp`**: The heart of the application. Contains all shared UI logic, themes, and screen implementations using Compose Multiplatform.
+    *   `commonMain`: Shared UI and navigation.
+    *   `androidMain`, `iosMain`, `jvmMain`, `wasmJsMain`, `webMain`: Platform-specific entry points and configurations.
+*   **`shared`**: Contains pure Kotlin logic shared between the client (`composeApp`) and the backend (`server`).
+*   **`server`**: A Ktor-based backend server.
+*   **`iosApp`**: The native iOS wrapper required for running the shared Compose UI on Apple devices.
 
-### Build and Run Android Application
+## ✨ Key Features
 
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
+-   **Adaptive Navigation**: Intelligent layout switching based on screen size:
+    -   **Compact**: Bottom Navigation Bar (Mobile)
+    -   **Medium**: Navigation Rail (Tablets/Foldables)
+    -   **Expanded**: Permanent Navigation Drawer (Desktop/Web)
+-   **Dynamic Data**: Portfolio content (About, Skills, Projects, Experience) is managed via a centralized JSON data source.
+-   **Dark Mode Support**: Built-in theme switching capability.
+-   **Seamless Navigation**: Uses the modern Jetpack Navigation for Compose in a multiplatform context.
 
-### Build and Run Desktop (JVM) Application
+## 🚀 Getting Started
 
-To build and run the development version of the desktop app, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:run
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:run
-  ```
+### Prerequisites
+- JDK 17 or higher
+- Android Studio (latest stable version)
+- Xcode (for iOS development)
 
-### Build and Run Server
+### Run the Application
 
-To build and run the development version of the server, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :server:run
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :server:run
-  ```
+| Platform | Command |
+| :--- | :--- |
+| **Android** | `./gradlew :composeApp:assembleDebug` |
+| **Desktop** | `./gradlew :composeApp:run` |
+| **Web (Wasm)** | `./gradlew :composeApp:wasmJsBrowserDevelopmentRun` |
+| **Server** | `./gradlew :server:run` |
 
-### Build and Run Web Application
+For **iOS**, open the `iosApp` directory in Xcode or use the Android Studio KMP plugin.
 
-To build and run the development version of the web app, use the run configuration from the run widget
-in your IDE's toolbar or run it directly from the terminal:
-- for the Wasm target (faster, modern browsers):
-  - on macOS/Linux
-    ```shell
-    ./gradlew :composeApp:wasmJsBrowserDevelopmentRun
-    ```
-  - on Windows
-    ```shell
-    .\gradlew.bat :composeApp:wasmJsBrowserDevelopmentRun
-    ```
-- for the JS target (slower, supports older browsers):
-  - on macOS/Linux
-    ```shell
-    ./gradlew :composeApp:jsBrowserDevelopmentRun
-    ```
-  - on Windows
-    ```shell
-    .\gradlew.bat :composeApp:jsBrowserDevelopmentRun
-    ```
+## 🛠️ Tech Stack
 
-### Build and Run iOS Application
-
-To build and run the development version of the iOS app, use the run configuration from the run widget
-in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+-   **Language**: Kotlin
+-   **UI Framework**: Compose Multiplatform
+-   **Navigation**: Navigation Compose Multiplatform
+-   **Serialization**: Kotlinx Serialization
+-   **Network/Backend**: Ktor
+-   **Resources**: MOKO Resources / Compose Resources
 
 ---
-
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html),
-[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform),
-[Kotlin/Wasm](https://kotl.in/wasm/)…
-
-We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
-If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).
+*Built with ❤️ using Kotlin Multiplatform.*
