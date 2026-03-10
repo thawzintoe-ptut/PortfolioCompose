@@ -1,0 +1,40 @@
+name: Nightly Beta Release
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * 1-5" # 3 AM UTC, Monday-Friday
+
+jobs:
+  calculateTag:
+    name: Calculate Release Tag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Calculate next tag
+        id: tag
+        run: |
+          latest_tag="$(git tag --sort=-creatordate | head -1)"
+          if [[ -z "$latest_tag" ]]; then latest_tag="1.0.0"; fi
+          
+          if [[ $latest_tag == *"RC"* ]]; then
+            last_version="${latest_tag##*RC}"
+            next_version=$((last_version + 1))
+            next_tag="${latest_tag%RC*}RC$next_version"
+          else
+            # Increment patch version and add RC1
+            base_version="${latest_tag%-*}"
+            major_minor="${base_version%.*}"
+            patch="${base_version##*.}"
+            next_tag="$major_minor.$((patch + 1))-RC1"
+          fi
+          echo "RELEASE_TAG=$next_tag" >> $GITHUB_ENV
+          echo "tag=$next_tag" >> $GITHUB_OUTPUT
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          generateReleaseNotes: true
+          tag: ${{ env.RELEASE_TAG }}
+          token: ${{ secrets.GH_PAT }}

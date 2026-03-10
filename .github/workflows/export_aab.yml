@@ -1,0 +1,43 @@
+name: Build and Export Signed AAB
+
+on:
+  workflow_dispatch:
+    inputs:
+      versionName:
+        description: 'App Version Name'
+        required: true
+      versionCode:
+        description: 'App Version Code'
+        required: true
+
+jobs:
+  buildAAB:
+    name: Build Signed AAB
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle'
+      - name: Update build version
+        run: |
+          sed -i "0,/versionName/{s/versionName = .*/versionName = \"${{ github.event.inputs.versionName }}\"/"} composeApp/build.gradle.kts
+          sed -i "0,/versionCode/{s/versionCode = .*/versionCode = ${{ github.event.inputs.versionCode }}/}" composeApp/build.gradle.kts
+      - name: Build .AAB
+        run: ./gradlew :composeApp:bundleRelease
+      - name: Sign Android Release
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: composeApp/build/outputs/bundle/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+      - name: Upload app AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-aab
+          path: ${{ env.SIGNED_RELEASE_FILE }}
