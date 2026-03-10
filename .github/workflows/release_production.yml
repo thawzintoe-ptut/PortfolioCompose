@@ -1,0 +1,99 @@
+name: Release Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      versionName:
+        description: 'Release Version Name (e.g., 1.0.0)'
+        required: true
+      versionCode:
+        description: 'Release Version Code (e.g., 100)'
+        required: true
+
+jobs:
+  build-android:
+    name: Build Signed Android AAB
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+          cache: 'gradle'
+      - name: Build Signed .AAB
+        run: ./gradlew :composeApp:bundleRelease
+      - name: Sign Android Release
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: composeApp/build/outputs/bundle/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+      - name: Upload app AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-release-aab
+          path: ${{ env.SIGNED_RELEASE_FILE }}
+
+  build-desktop:
+    name: Build Desktop Distributions
+    runs-on: macos-latest # Using macOS for DMG, can use matrix for Windows/Linux
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+          cache: 'gradle'
+      - name: Build Desktop (DMG/PKG)
+        run: ./gradlew :composeApp:packageReleaseDistributionForCurrentOS
+      - name: Upload Desktop Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: desktop-distributions
+          path: composeApp/build/compose/binaries/main/
+
+  build-web:
+    name: Build Web Production
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+          cache: 'gradle'
+      - name: Build Web (Wasm/JS)
+        run: ./gradlew :composeApp:wasmJsBrowserDistribution
+      - name: Upload Web Distribution
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-production-bundle
+          path: composeApp/build/dist/wasmJs/productionExecutable/
+
+  build-ios:
+    name: Build iOS Framework
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+          cache: 'gradle'
+      - name: Cache Kotlin Native (Konan)
+        uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-${{ hashFiles('**/*.gradle.kts') }}
+          restore-keys: ${{ runner.os }}-konan-
+      - name: Build iOS Framework
+        run: ./gradlew :composeApp:embedAndSignAppleFrameworkForXcode
+      # In a real environment, you'd add steps to sign and build the .ipa
+      # using secrets and yukiarrr/ios-build-action
