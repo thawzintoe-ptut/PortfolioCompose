@@ -21,6 +21,7 @@ import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.PermanentDrawerSheet
 import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -142,7 +143,13 @@ fun AdaptivePortfolioApp(
                                 selected = currentRoute?.contains(item.screen::class.simpleName ?: "") == true,
                                 onClick = { navigate(item.screen) },
                                 icon = { Icon(item.icon, contentDescription = item.label) },
-                                label = { Text(item.label) },
+                                label = {
+                                    Text(
+                                        text = item.label,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        maxLines = 1,
+                                    )
+                                },
                             )
                         }
                     }
@@ -161,7 +168,13 @@ fun AdaptivePortfolioApp(
                                 selected = currentRoute?.contains(item.screen::class.simpleName ?: "") == true,
                                 onClick = { navigate(item.screen) },
                                 icon = { Icon(item.icon, contentDescription = item.label) },
-                                label = { Text(item.label) },
+                                label = {
+                                    Text(
+                                        text = item.label,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        maxLines = 1,
+                                    )
+                                },
                             )
                         }
                     }
@@ -176,7 +189,13 @@ fun AdaptivePortfolioApp(
                     PermanentDrawerSheet {
                         navItems.forEach { item ->
                             NavigationDrawerItem(
-                                label = { Text(item.label) },
+                                label = {
+                                    Text(
+                                        text = item.label,
+                                        style = MaterialTheme.typography.labelLarge,
+                                        maxLines = 1,
+                                    )
+                                },
                                 icon = { Icon(item.icon, contentDescription = item.label) },
                                 selected = currentRoute?.contains(item.screen::class.simpleName ?: "") == true,
                                 onClick = { navigate(item.screen) },
