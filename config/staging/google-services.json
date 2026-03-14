@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "412306417639",
+    "project_id": "portfolio-staging-2964b",
+    "storage_bucket": "portfolio-staging-2964b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:412306417639:android:0eb20bfd1c3a430a60bf42",
+        "android_client_info": {
+          "package_name": "com.ptut.portfolio.staging"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNVcmQQ5XJHkiIIHI52LLquVWiN5E_AFE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
