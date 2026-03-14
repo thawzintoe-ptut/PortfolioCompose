@@ -128,9 +128,14 @@ compose.desktop {
     }
 }
 
-tasks.register("copyFirebaseConfig", Copy::class) {
-    from("${rootProject.projectDir}/config/$flavor/google-services.json")
-    into(projectDir)
+tasks.register("copyFirebaseConfig") {
+    val source = file("${rootProject.projectDir}/config/$flavor/google-services.json")
+    val target = file("${projectDir}/google-services.json")
+    doLast {
+        if (source.exists()) {
+            source.copyTo(target, overwrite = true)
+        }
+    }
 }
 
 tasks.named("preBuild") {
