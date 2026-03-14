@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "978564042528",
+    "project_id": "portfolio-dev-5798f",
+    "storage_bucket": "portfolio-dev-5798f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:978564042528:android:f89181e670f8b2ab3b9145",
+        "android_client_info": {
+          "package_name": "com.ptut.portfolio.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGvO0WC4Q_gS9-dVL4ZfUOWwdKwF-nRMc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

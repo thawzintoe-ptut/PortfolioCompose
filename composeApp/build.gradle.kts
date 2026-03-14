@@ -11,6 +11,13 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
 }
 
+val flavor: String by project
+val suffix = when (flavor) {
+    "dev" -> ".dev"
+    "staging" -> ".staging"
+    else -> ""
+}
+
 kotlin {
     androidTarget {
         compilerOptions {
@@ -47,6 +54,7 @@ kotlin {
             implementation(libs.androidx.activity.compose)
         }
         commonMain.dependencies {
+            implementation(project(":config:$flavor"))
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
@@ -76,10 +84,17 @@ android {
 
     defaultConfig {
         applicationId = "com.ptut.portfolio"
+        applicationIdSuffix = suffix
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+
+        when (flavor) {
+            "dev" -> resValue("string", "app_name", "Portfolio Dev")
+            "staging" -> resValue("string", "app_name", "Portfolio Staging")
+            else -> resValue("string", "app_name", "Portfolio")
+        }
     }
     packaging {
         resources {
@@ -111,4 +126,27 @@ compose.desktop {
             packageVersion = "1.0.0"
         }
     }
+}
+
+tasks.register("copyFirebaseConfig") {
+    val source = file("${rootProject.projectDir}/config/$flavor/google-services.json")
+    val target = file("${projectDir}/google-services.json")
+    doLast {
+        if (source.exists()) {
+            source.copyTo(target, overwrite = true)
+        }
+    }
+}
+
+tasks.named("preBuild") {
+    dependsOn("copyFirebaseConfig")
+}
+
+tasks.register("runDebug", Exec::class) {
+    dependsOn("clean", "uninstallDebug", "installDebug")
+    val adb = android.adbExecutable.absolutePath
+    commandLine(
+        adb, "shell", "am", "start", "-n",
+        "com.ptut.portfolio$suffix/com.ptut.portfolio.MainActivity"
+    )
 }
