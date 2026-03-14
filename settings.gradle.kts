@@ -34,3 +34,6 @@ plugins {
 
 include(":composeApp")
 include(":shared")
+include(":config:dev")
+include(":config:staging")
+include(":config:prod")
