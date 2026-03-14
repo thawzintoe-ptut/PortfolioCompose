@@ -1,13 +1,22 @@
+# TODO: Production Release Pipeline
+# Triggered on merge to master. Should:
+# 1. Build signed Android AAB and deploy to Google Play Store (production track)
+# 2. Build Desktop distributions (DMG/MSI/DEB) and create GitHub Release with assets
+# 3. Build Web (Wasm) and deploy to Firebase Hosting (prod project)
+# 4. Build iOS .ipa, sign, and deploy to App Store Connect / TestFlight
+# 5. Create a Git tag with the version number
+# All builds use -Pflavor=prod
+
 name: Release Production
 
 on:
+  push:
+    branches:
+      - master
   workflow_dispatch:
     inputs:
       versionName:
-        description: 'Release Version Name (e.g., 1.0.0)'
-        required: true
-      versionCode:
-        description: 'Release Version Code (e.g., 100)'
+        description: 'Release Version Name (Major.Minor.Patch, e.g., 1.2.3)'
         required: true
 
 jobs:
@@ -22,6 +31,15 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
           cache: 'gradle'
+      - name: Update build version
+        if: inputs.versionName != ''
+        run: |
+          IFS='.' read -r MAJOR MINOR PATCH <<< "${{ inputs.versionName }}"
+          VERSION_CODE=$((MAJOR * 10000 + MINOR * 100 + PATCH))
+          sed -i "s/versionMajor=.*/versionMajor=$MAJOR/" gradle.properties
+          sed -i "s/versionMinor=.*/versionMinor=$MINOR/" gradle.properties
+          sed -i "s/versionPatch=.*/versionPatch=$PATCH/" gradle.properties
+          echo "Computed versionCode: $VERSION_CODE for ${{ inputs.versionName }}"
       - name: Set up Google Services JSON
         run: echo "${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON_PROD }}" | base64 -d > composeApp/google-services.json
       - name: Build Signed .AAB
@@ -39,6 +57,15 @@ jobs:
         with:
           name: android-release-aab
           path: ${{ env.SIGNED_RELEASE_FILE }}
+      # TODO: Upload to Google Play Store (production track)
+      # - name: Upload to Play Store
+      #   uses: r0adkll/upload-google-play@v1
+      #   with:
+      #     serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+      #     packageName: com.ptut.portfolio
+      #     releaseFiles: ${{ env.SIGNED_RELEASE_FILE }}
+      #     track: production
+      #     status: 'completed'
 
   build-desktop:
     name: Build Desktop Distributions
@@ -51,6 +78,13 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
           cache: 'gradle'
+      - name: Update build version
+        if: inputs.versionName != ''
+        run: |
+          IFS='.' read -r MAJOR MINOR PATCH <<< "${{ inputs.versionName }}"
+          sed -i '' "s/versionMajor=.*/versionMajor=$MAJOR/" gradle.properties
+          sed -i '' "s/versionMinor=.*/versionMinor=$MINOR/" gradle.properties
+          sed -i '' "s/versionPatch=.*/versionPatch=$PATCH/" gradle.properties
       - name: Build Desktop (DMG/PKG)
         run: ./gradlew :composeApp:packageReleaseDistributionForCurrentOS -Pflavor=prod
       - name: Upload Desktop Artifacts
@@ -58,9 +92,15 @@ jobs:
         with:
           name: desktop-distributions
           path: composeApp/build/compose/binaries/main/
+      # TODO: Create GitHub Release with desktop artifacts
+      # - name: Create GitHub Release
+      #   uses: softprops/action-gh-release@v2
+      #   with:
+      #     tag_name: v${{ inputs.versionName }}
+      #     files: composeApp/build/compose/binaries/main/dmg/*.dmg
 
   build-web:
-    name: Build Web Production
+    name: Build & Deploy Web Production
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -70,6 +110,13 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
           cache: 'gradle'
+      - name: Update build version
+        if: inputs.versionName != ''
+        run: |
+          IFS='.' read -r MAJOR MINOR PATCH <<< "${{ inputs.versionName }}"
+          sed -i "s/versionMajor=.*/versionMajor=$MAJOR/" gradle.properties
+          sed -i "s/versionMinor=.*/versionMinor=$MINOR/" gradle.properties
+          sed -i "s/versionPatch=.*/versionPatch=$PATCH/" gradle.properties
       - name: Build Web (Wasm/JS)
         run: ./gradlew :composeApp:wasmJsBrowserDistribution -Pflavor=prod
       - name: Upload Web Distribution
@@ -77,9 +124,17 @@ jobs:
         with:
           name: web-production-bundle
           path: composeApp/build/dist/wasmJs/productionExecutable/
+      # TODO: Deploy to Firebase Hosting (prod)
+      # - name: Deploy to Firebase Hosting
+      #   uses: FirebaseExtended/action-hosting-deploy@v0
+      #   with:
+      #     repoToken: "${{ secrets.GITHUB_TOKEN }}"
+      #     firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON_PROD }}"
+      #     projectId: "${{ secrets.FIREBASE_PROJECT_ID_PROD }}"
+      #     channelId: live
 
   build-ios:
-    name: Build iOS Framework
+    name: Build iOS
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v6
@@ -95,5 +150,31 @@ jobs:
           path: ~/.konan
           key: ${{ runner.os }}-konan-${{ hashFiles('**/*.gradle.kts') }}
           restore-keys: ${{ runner.os }}-konan-
+      - name: Update build version
+        if: inputs.versionName != ''
+        run: |
+          IFS='.' read -r MAJOR MINOR PATCH <<< "${{ inputs.versionName }}"
+          sed -i '' "s/versionMajor=.*/versionMajor=$MAJOR/" gradle.properties
+          sed -i '' "s/versionMinor=.*/versionMinor=$MINOR/" gradle.properties
+          sed -i '' "s/versionPatch=.*/versionPatch=$PATCH/" gradle.properties
       - name: Build iOS Framework
         run: ./gradlew :composeApp:linkReleaseFrameworkIosArm64 -Pflavor=prod
+      # TODO: Build .ipa, sign, and deploy to App Store Connect
+      # - name: Build iOS App
+      #   run: |
+      #     xcodebuild -project iosApp/iosApp.xcodeproj \
+      #       -scheme "iOS Prod" \
+      #       -configuration Release \
+      #       -archivePath build/iosApp.xcarchive \
+      #       archive
+      #     xcodebuild -exportArchive \
+      #       -archivePath build/iosApp.xcarchive \
+      #       -exportPath build/ipa \
+      #       -exportOptionsPlist exportOptions.plist
+      # - name: Upload to TestFlight
+      #   uses: apple-actions/upload-testflight-build@v1
+      #   with:
+      #     app-path: build/ipa/PortfolioCompose.ipa
+      #     issuer-id: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+      #     api-key-id: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+      #     api-private-key: ${{ secrets.APP_STORE_CONNECT_API_PRIVATE_KEY }}

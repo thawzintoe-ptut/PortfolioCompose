@@ -4,10 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       versionName:
-        description: 'App Version Name'
-        required: true
-      versionCode:
-        description: 'App Version Code'
+        description: 'App Version Name (Major.Minor.Patch, e.g., 1.2.3)'
         required: true
       flavor:
         description: 'Build flavor'
@@ -36,8 +33,12 @@ jobs:
           cache: 'gradle'
       - name: Update build version
         run: |
-          sed -i "0,/versionName/{s/versionName = .*/versionName = \"${{ inputs.versionName }}\"/"} composeApp/build.gradle.kts
-          sed -i "0,/versionCode/{s/versionCode = .*/versionCode = ${{ inputs.versionCode }}/}" composeApp/build.gradle.kts
+          IFS='.' read -r MAJOR MINOR PATCH <<< "${{ inputs.versionName }}"
+          VERSION_CODE=$((MAJOR * 10000 + MINOR * 100 + PATCH))
+          sed -i "s/versionMajor=.*/versionMajor=$MAJOR/" gradle.properties
+          sed -i "s/versionMinor=.*/versionMinor=$MINOR/" gradle.properties
+          sed -i "s/versionPatch=.*/versionPatch=$PATCH/" gradle.properties
+          echo "Computed versionCode: $VERSION_CODE for ${{ inputs.versionName }}"
       - name: Set up Google Services JSON
         env:
           GS_DEV: ${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON_DEV }}
