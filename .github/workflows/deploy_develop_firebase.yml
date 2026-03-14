@@ -1,0 +1,107 @@
+name: Deploy Dev Build to Firebase
+
+on:
+  push:
+    branches:
+      - develop
+
+env:
+  FLAVOR: dev
+
+jobs:
+  deploy-android:
+    name: Deploy Android to Firebase
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle'
+      - name: Set up Google Services JSON
+        run: echo "${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON_DEV }}" | base64 -d > composeApp/google-services.json
+      - name: Build debug APK
+        run: ./gradlew :composeApp:assembleDebug -Pflavor=dev
+      - name: Deploy to Firebase Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.5.0
+        with:
+          appId: ${{ secrets.FIREBASE_ANDROID_APP_ID_DEV }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_DEV }}
+          groups: testers
+          file: composeApp/build/outputs/apk/debug/composeApp-debug.apk
+
+  deploy-desktop:
+    name: Deploy Desktop to Firebase
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle'
+      - name: Build Desktop (DMG)
+        run: ./gradlew :composeApp:packageDistributionForCurrentOS -Pflavor=dev
+      # TODO: Upload DMG to Firebase App Distribution
+      # Firebase App Distribution supports macOS apps via direct upload
+      # - name: Deploy Desktop to Firebase Distribution
+      #   uses: wzieba/Firebase-Distribution-Github-Action@v1.5.0
+      #   with:
+      #     appId: ${{ secrets.FIREBASE_DESKTOP_APP_ID_DEV }}
+      #     serviceCredentialsFileContent: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_DEV }}
+      #     groups: testers
+      #     file: composeApp/build/compose/binaries/main/dmg/*.dmg
+      - name: Upload Desktop artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: desktop-dev-dmg
+          path: composeApp/build/compose/binaries/main/dmg/
+
+  deploy-ios:
+    name: Deploy iOS to Firebase
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle'
+      - name: Cache Kotlin Native (Konan)
+        uses: actions/cache@v5
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-${{ hashFiles('**/*.gradle.kts') }}
+          restore-keys: ${{ runner.os }}-konan-
+      - name: Build iOS Framework
+        run: ./gradlew :composeApp:linkDebugFrameworkIosArm64 -Pflavor=dev
+      # TODO: Build .ipa and deploy to Firebase Distribution
+      # Steps needed:
+      # 1. Set up Xcode signing (certificates + provisioning profiles)
+      # 2. Build .ipa using xcodebuild:
+      #    xcodebuild -project iosApp/iosApp.xcodeproj \
+      #      -scheme "iOS Dev" \
+      #      -configuration Debug \
+      #      -archivePath build/iosApp.xcarchive \
+      #      archive
+      #    xcodebuild -exportArchive \
+      #      -archivePath build/iosApp.xcarchive \
+      #      -exportPath build/ipa \
+      #      -exportOptionsPlist exportOptions.plist
+      # 3. Deploy to Firebase:
+      #    - name: Deploy iOS to Firebase Distribution
+      #      uses: wzieba/Firebase-Distribution-Github-Action@v1.5.0
+      #      with:
+      #        appId: ${{ secrets.FIREBASE_IOS_APP_ID_DEV }}
+      #        serviceCredentialsFileContent: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_DEV }}
+      #        groups: testers
+      #        file: build/ipa/*.ipa
+      - name: Upload iOS Framework artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: ios-dev-framework
+          path: composeApp/build/bin/iosArm64/debugFramework/
