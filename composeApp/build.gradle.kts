@@ -18,6 +18,12 @@ val suffix = when (flavor) {
     else -> ""
 }
 
+val versionMajor: String by project
+val versionMinor: String by project
+val versionPatch: String by project
+val appVersionCode = versionMajor.toInt() * 10000 + versionMinor.toInt() * 100 + versionPatch.toInt()
+val appVersionName = "$versionMajor.$versionMinor.$versionPatch"
+
 kotlin {
     androidTarget {
         compilerOptions {
@@ -87,8 +93,8 @@ android {
         applicationIdSuffix = suffix
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = appVersionCode
+        versionName = appVersionName
 
         when (flavor) {
             "dev" -> resValue("string", "app_name", "Portfolio Dev")
@@ -123,7 +129,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.ptut.portfolio"
-            packageVersion = "1.0.0"
+            packageVersion = appVersionName
         }
     }
 }
