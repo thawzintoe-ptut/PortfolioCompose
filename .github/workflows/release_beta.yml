@@ -18,8 +18,10 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
           cache: 'gradle'
+      - name: Set up Google Services JSON
+        run: echo "${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON_STAGING }}" | base64 -d > composeApp/google-services.json
       - name: Build .AAB
-        run: ./gradlew :composeApp:bundleRelease
+        run: ./gradlew :composeApp:bundleRelease -Pflavor=staging
       - name: Sign Android Release
         uses: r0adkll/sign-android-release@v1
         with:
@@ -48,7 +50,7 @@ jobs:
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
-          packageName: com.ptut.portfolio
+          packageName: com.ptut.portfolio.staging
           releaseFiles: ./*.aab
           track: internal
           status: 'draft'

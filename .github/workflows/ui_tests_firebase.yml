@@ -2,10 +2,23 @@ name: UI Tests Firebase
 
 on:
   workflow_dispatch:
+    inputs:
+      flavor:
+        description: 'Build flavor'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+
+env:
+  FLAVOR: ${{ inputs.flavor || 'dev' }}
 
 jobs:
   generateTestAPK:
-    name: Generate APKs for UI tests
+    name: Generate APKs (${{ inputs.flavor || 'dev' }})
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -16,7 +29,7 @@ jobs:
           java-version: '17'
           cache: 'gradle'
       - name: Assemble app debug APK
-        run: ./gradlew :composeApp:assembleDebug
+        run: ./gradlew :composeApp:assembleDebug -Pflavor=${{ env.FLAVOR }}
       - name: Upload app APK
         uses: actions/upload-artifact@v6
         with:
@@ -24,7 +37,7 @@ jobs:
           path: composeApp/build/outputs/apk/debug/composeApp-debug.apk
 
       - name: Assemble Android Instrumentation Tests
-        run: ./gradlew :composeApp:assembleAndroidTest
+        run: ./gradlew :composeApp:assembleAndroidTest -Pflavor=${{ env.FLAVOR }}
       - name: Upload Android Test APK
         uses: actions/upload-artifact@v6
         with:
@@ -32,7 +45,7 @@ jobs:
           path: composeApp/build/outputs/apk/androidTest/debug/composeApp-debug-androidTest.apk
 
   firebase:
-    name: Run UI tests on Firebase Test Lab
+    name: Run UI tests on Firebase Test Lab (${{ inputs.flavor || 'dev' }})
     needs: generateTestAPK
     runs-on: ubuntu-latest
     steps:
@@ -45,13 +58,28 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           name: app-debug-androidTest
+      - name: Set flavor-specific Firebase project
+        id: firebase
+        env:
+          PID_DEV: ${{ secrets.FIREBASE_PROJECT_ID_DEV }}
+          PID_STAGING: ${{ secrets.FIREBASE_PROJECT_ID_STAGING }}
+          PID_PROD: ${{ secrets.FIREBASE_PROJECT_ID_PROD }}
+          CRED_DEV: ${{ secrets.GCLOUD_AUTH_DEV }}
+          CRED_STAGING: ${{ secrets.GCLOUD_AUTH_STAGING }}
+          CRED_PROD: ${{ secrets.GCLOUD_AUTH_PROD }}
+        run: |
+          case "${{ env.FLAVOR }}" in
+            dev)     echo "pid=$PID_DEV" >> $GITHUB_OUTPUT; echo "cred=$CRED_DEV" >> $GITHUB_OUTPUT ;;
+            staging) echo "pid=$PID_STAGING" >> $GITHUB_OUTPUT; echo "cred=$CRED_STAGING" >> $GITHUB_OUTPUT ;;
+            prod)    echo "pid=$PID_PROD" >> $GITHUB_OUTPUT; echo "cred=$CRED_PROD" >> $GITHUB_OUTPUT ;;
+          esac
       - uses: 'google-github-actions/auth@v2'
         with:
-          credentials_json: '${{ secrets.GCLOUD_AUTH }}'
+          credentials_json: '${{ steps.firebase.outputs.cred }}'
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v2'
       - name: Set current project
-        run: gcloud config set project ${{ secrets.FIREBASE_PROJECT_ID }}
+        run: gcloud config set project ${{ steps.firebase.outputs.pid }}
       - name: Run Instrumentation Tests in Firebase Test Lab
         run: |
           gcloud firebase test android run \

@@ -1,10 +1,23 @@
-name: Deploy Production Build to Firebase
+name: Deploy to Firebase Distribution
 
 on:
   push:
     branches:
       - master
   workflow_dispatch:
+    inputs:
+      flavor:
+        description: 'Build flavor'
+        required: true
+        default: 'prod'
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+
+env:
+  FLAVOR: ${{ inputs.flavor || 'prod' }}
 
 jobs:
   update_versions:
@@ -16,7 +29,7 @@ jobs:
         run: |
           latestTag="$(git tag --sort=-creatordate | head -1 || echo "1.0.0")"
           sed -i "0,/versionName/{s/versionName = .*/versionName = \"${latestTag}\"/"} composeApp/build.gradle.kts
-          
+
           currentCode=$(grep "versionCode =" composeApp/build.gradle.kts | head -1 | awk -F'=' '{print $2}' | tr -d ' ')
           newCode=$((currentCode + 1))
           sed -i "0,/versionCode/{s/versionCode = .*/versionCode = ${newCode}/}" composeApp/build.gradle.kts
@@ -27,7 +40,7 @@ jobs:
           message: "chore: bump version code"
 
   build_aab:
-    name: Build Production AAB
+    name: Build AAB (${{ inputs.flavor || 'prod' }})
     runs-on: ubuntu-latest
     needs: update_versions
     steps:
@@ -40,21 +53,42 @@ jobs:
           cache: 'gradle'
       - name: Set up Google Services JSON
         env:
-          FIREBASE_GOOGLE_SERVICES_JSON: ${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON }}
+          GS_DEV: ${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON_DEV }}
+          GS_STAGING: ${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON_STAGING }}
+          GS_PROD: ${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON_PROD }}
         run: |
-          echo $FIREBASE_GOOGLE_SERVICES_JSON | base64 -d > composeApp/google-services.json || echo $FIREBASE_GOOGLE_SERVICES_JSON > composeApp/google-services.json
+          case "${{ env.FLAVOR }}" in
+            dev)     echo "$GS_DEV" | base64 -d > composeApp/google-services.json ;;
+            staging) echo "$GS_STAGING" | base64 -d > composeApp/google-services.json ;;
+            prod)    echo "$GS_PROD" | base64 -d > composeApp/google-services.json ;;
+          esac
       - name: Build release AAB
-        run: ./gradlew :composeApp:bundleRelease
+        run: ./gradlew :composeApp:bundleRelease -Pflavor=${{ env.FLAVOR }}
 
   deploy_to_firebase:
-    name: Deploy to Firebase
+    name: Deploy to Firebase (${{ inputs.flavor || 'prod' }})
     runs-on: ubuntu-latest
     needs: build_aab
     steps:
-      - name: Deploy Android Production to Firebase
+      - name: Set flavor-specific Firebase config
+        id: firebase
+        env:
+          APP_ID_DEV: ${{ secrets.FIREBASE_ANDROID_APP_ID_DEV }}
+          APP_ID_STAGING: ${{ secrets.FIREBASE_ANDROID_APP_ID_STAGING }}
+          APP_ID_PROD: ${{ secrets.FIREBASE_ANDROID_APP_ID_PROD }}
+          CRED_DEV: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_DEV }}
+          CRED_STAGING: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_STAGING }}
+          CRED_PROD: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_PROD }}
+        run: |
+          case "${{ env.FLAVOR }}" in
+            dev)     echo "app_id=$APP_ID_DEV" >> $GITHUB_OUTPUT; echo "cred=$CRED_DEV" >> $GITHUB_OUTPUT ;;
+            staging) echo "app_id=$APP_ID_STAGING" >> $GITHUB_OUTPUT; echo "cred=$CRED_STAGING" >> $GITHUB_OUTPUT ;;
+            prod)    echo "app_id=$APP_ID_PROD" >> $GITHUB_OUTPUT; echo "cred=$CRED_PROD" >> $GITHUB_OUTPUT ;;
+          esac
+      - name: Deploy to Firebase Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1.5.0
         with:
-          appId: ${{ secrets.FIREBASE_ANDROID_APP_ID }}
-          serviceCredentialsFileContent: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON }}
+          appId: ${{ steps.firebase.outputs.app_id }}
+          serviceCredentialsFileContent: ${{ steps.firebase.outputs.cred }}
           groups: testers
           file: composeApp/build/outputs/bundle/release/composeApp-release.aab

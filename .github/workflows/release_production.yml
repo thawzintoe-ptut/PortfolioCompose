@@ -22,8 +22,10 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
           cache: 'gradle'
+      - name: Set up Google Services JSON
+        run: echo "${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON_PROD }}" | base64 -d > composeApp/google-services.json
       - name: Build Signed .AAB
-        run: ./gradlew :composeApp:bundleRelease
+        run: ./gradlew :composeApp:bundleRelease -Pflavor=prod
       - name: Sign Android Release
         uses: r0adkll/sign-android-release@v1
         with:
@@ -40,7 +42,7 @@ jobs:
 
   build-desktop:
     name: Build Desktop Distributions
-    runs-on: macos-latest # Using macOS for DMG, can use matrix for Windows/Linux
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v6
       - name: Set up JDK 17
@@ -50,7 +52,7 @@ jobs:
           distribution: 'zulu'
           cache: 'gradle'
       - name: Build Desktop (DMG/PKG)
-        run: ./gradlew :composeApp:packageReleaseDistributionForCurrentOS
+        run: ./gradlew :composeApp:packageReleaseDistributionForCurrentOS -Pflavor=prod
       - name: Upload Desktop Artifacts
         uses: actions/upload-artifact@v6
         with:
@@ -69,7 +71,7 @@ jobs:
           distribution: 'zulu'
           cache: 'gradle'
       - name: Build Web (Wasm/JS)
-        run: ./gradlew :composeApp:wasmJsBrowserDistribution
+        run: ./gradlew :composeApp:wasmJsBrowserDistribution -Pflavor=prod
       - name: Upload Web Distribution
         uses: actions/upload-artifact@v6
         with:
@@ -94,6 +96,4 @@ jobs:
           key: ${{ runner.os }}-konan-${{ hashFiles('**/*.gradle.kts') }}
           restore-keys: ${{ runner.os }}-konan-
       - name: Build iOS Framework
-        run: ./gradlew :composeApp:linkReleaseFrameworkIosArm64
-      # In a real environment, you'd add steps to sign and build the .ipa
-      # using secrets and yukiarrr/ios-build-action
+        run: ./gradlew :composeApp:linkReleaseFrameworkIosArm64 -Pflavor=prod
