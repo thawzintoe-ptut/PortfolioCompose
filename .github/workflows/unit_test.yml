@@ -15,11 +15,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
-          distribution: 'zulu'
+          java-version: '21'
+          distribution: 'jetbrains'
           cache: 'gradle'
       - name: Run Tests
         run: ./gradlew :composeApp:testDebugUnitTest :composeApp:jvmTest :composeApp:wasmJsBrowserTest
@@ -29,11 +29,11 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
-          distribution: 'zulu'
+          java-version: '21'
+          distribution: 'jetbrains'
           cache: 'gradle'
       - name: Cache Kotlin Native
         uses: actions/cache@v5
