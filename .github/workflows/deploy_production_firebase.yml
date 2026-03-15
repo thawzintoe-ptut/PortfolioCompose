@@ -75,7 +75,7 @@ jobs:
             prod)    echo "app_id=$APP_ID_PROD" >> $GITHUB_OUTPUT; echo "cred=$CRED_PROD" >> $GITHUB_OUTPUT ;;
           esac
       - name: Deploy to Firebase Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1.5.0
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.1
         with:
           appId: ${{ steps.firebase.outputs.app_id }}
           serviceCredentialsFileContent: ${{ steps.firebase.outputs.cred }}

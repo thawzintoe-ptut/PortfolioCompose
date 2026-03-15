@@ -23,7 +23,7 @@ jobs:
       - name: Build debug APK
         run: ./gradlew :composeApp:assembleDebug -Pflavor=dev
       - name: Deploy to Firebase Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1.5.0
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.1
         with:
           appId: ${{ secrets.FIREBASE_ANDROID_APP_ID_DEV }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_DEV }}
@@ -47,7 +47,7 @@ jobs:
       - name: Build debug APK
         run: ./gradlew :composeApp:assembleDebug -Pflavor=staging
       - name: Deploy to Firebase Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1.5.0
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.1
         with:
           appId: ${{ secrets.FIREBASE_ANDROID_APP_ID_STAGING }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_STAGING }}
@@ -98,7 +98,7 @@ jobs:
             -exportPath ${{ runner.temp }}/ipa-dev \
             -exportOptionsPlist iosApp/exportOptions-dev.plist
       - name: Deploy to Firebase Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1.5.0
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.1
         with:
           appId: ${{ secrets.FIREBASE_IOS_APP_ID_DEV }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_DEV }}
@@ -155,7 +155,7 @@ jobs:
             -exportPath ${{ runner.temp }}/ipa-staging \
             -exportOptionsPlist iosApp/exportOptions-staging.plist
       - name: Deploy to Firebase Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1.5.0
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.1
         with:
           appId: ${{ secrets.FIREBASE_IOS_APP_ID_STAGING }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_STAGING }}
@@ -184,7 +184,7 @@ jobs:
         run: ./gradlew :composeApp:packageDistributionForCurrentOS -Pflavor=dev
       # TODO: Uncomment when Firebase Desktop App ID is configured
       # - name: Deploy Desktop to Firebase Distribution
-      #   uses: wzieba/Firebase-Distribution-Github-Action@v1.5.0
+      #   uses: wzieba/Firebase-Distribution-Github-Action@v1.7.1
       #   with:
       #     appId: ${{ secrets.FIREBASE_DESKTOP_APP_ID_DEV }}
       #     serviceCredentialsFileContent: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_DEV }}
@@ -212,7 +212,7 @@ jobs:
         run: ./gradlew :composeApp:packageDistributionForCurrentOS -Pflavor=staging
       # TODO: Uncomment when Firebase Desktop App ID is configured
       # - name: Deploy Desktop to Firebase Distribution
-      #   uses: wzieba/Firebase-Distribution-Github-Action@v1.5.0
+      #   uses: wzieba/Firebase-Distribution-Github-Action@v1.7.1
       #   with:
       #     appId: ${{ secrets.FIREBASE_DESKTOP_APP_ID_STAGING }}
       #     serviceCredentialsFileContent: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_STAGING }}
