@@ -1,0 +1,68 @@
+name: Build and Export Signed AAB
+
+on:
+  workflow_dispatch:
+    inputs:
+      versionName:
+        description: 'App Version Name (Major.Minor.Patch, e.g., 1.2.3)'
+        required: true
+      flavor:
+        description: 'Build flavor'
+        required: true
+        default: 'prod'
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+
+env:
+  FLAVOR: ${{ inputs.flavor || 'prod' }}
+
+jobs:
+  buildAAB:
+    name: Build Signed AAB (${{ inputs.flavor || 'prod' }})
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'jetbrains'
+          java-version: '21'
+          cache: 'gradle'
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Update build version
+        run: |
+          IFS='.' read -r MAJOR MINOR PATCH <<< "${{ inputs.versionName }}"
+          VERSION_CODE=$((MAJOR * 10000 + MINOR * 100 + PATCH))
+          sed -i "s/versionMajor=.*/versionMajor=$MAJOR/" gradle.properties
+          sed -i "s/versionMinor=.*/versionMinor=$MINOR/" gradle.properties
+          sed -i "s/versionPatch=.*/versionPatch=$PATCH/" gradle.properties
+          echo "Computed versionCode: $VERSION_CODE for ${{ inputs.versionName }}"
+      - name: Set up Google Services JSON
+        env:
+          GS_DEV: ${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON_DEV }}
+          GS_STAGING: ${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON_STAGING }}
+          GS_PROD: ${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON_PROD }}
+        run: |
+          case "${{ env.FLAVOR }}" in
+            dev)     echo "$GS_DEV" | base64 -d > composeApp/google-services.json ;;
+            staging) echo "$GS_STAGING" | base64 -d > composeApp/google-services.json ;;
+            prod)    echo "$GS_PROD" | base64 -d > composeApp/google-services.json ;;
+          esac
+      - name: Build .AAB
+        run: ./gradlew :composeApp:bundleRelease -Pflavor=${{ env.FLAVOR }}
+      - name: Sign Android Release
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: composeApp/build/outputs/bundle/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+      - name: Upload app AAB
+        uses: actions/upload-artifact@v6
+        with:
+          name: app-${{ env.FLAVOR }}-release-aab
+          path: ${{ env.SIGNED_RELEASE_FILE }}

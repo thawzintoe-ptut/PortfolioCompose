@@ -1,0 +1,287 @@
+name: Deploy Dev & Staging to Firebase
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  # ── Android Dev ────────────────────────────────────────────────────────
+  deploy-android-dev:
+    name: Android (Dev) → Firebase Distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'jetbrains'
+          java-version: '21'
+          cache: 'gradle'
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Google Services JSON
+        run: echo "${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON_DEV }}" | base64 -d > composeApp/google-services.json
+      - name: Build debug APK
+        run: ./gradlew :composeApp:assembleDebug -Pflavor=dev
+      - name: Deploy to Firebase Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.1
+        with:
+          appId: ${{ secrets.FIREBASE_ANDROID_APP_ID_DEV }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_DEV }}
+          groups: testers
+          file: composeApp/build/outputs/apk/debug/composeApp-debug.apk
+
+  # ── Android Staging ────────────────────────────────────────────────────
+  deploy-android-staging:
+    name: Android (Staging) → Firebase Distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'jetbrains'
+          java-version: '21'
+          cache: 'gradle'
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Google Services JSON
+        run: echo "${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON_STAGING }}" | base64 -d > composeApp/google-services.json
+      - name: Build debug APK
+        run: ./gradlew :composeApp:assembleDebug -Pflavor=staging
+      - name: Deploy to Firebase Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.1
+        with:
+          appId: ${{ secrets.FIREBASE_ANDROID_APP_ID_STAGING }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_STAGING }}
+          groups: testers
+          file: composeApp/build/outputs/apk/debug/composeApp-debug.apk
+
+  # ── iOS Dev ────────────────────────────────────────────────────────────
+  deploy-ios-dev:
+    name: iOS (Dev) → Firebase Distribution
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'jetbrains'
+          java-version: '21'
+          cache: 'gradle'
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cache Kotlin Native (Konan)
+        uses: actions/cache@v5
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-${{ hashFiles('**/*.gradle.kts') }}
+          restore-keys: ${{ runner.os }}-konan-
+      - name: Build iOS Framework
+        run: ./gradlew :composeApp:linkDebugFrameworkIosArm64 -Pflavor=dev
+      - name: Set up Apple certificate and provisioning profile
+        uses: apple-actions/import-codesign-certs@v5
+        with:
+          p12-file-base64: ${{ secrets.APPLE_CERTIFICATE_P12_BASE64 }}
+          p12-password: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+      - name: Install provisioning profile
+        run: |
+          echo "${{ secrets.APPLE_PROVISIONING_PROFILE_DEV_BASE64 }}" | base64 -d > profile.mobileprovision
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+      - name: Build iOS .ipa
+        run: |
+          xcodebuild -project iosApp/iosApp.xcodeproj \
+            -scheme "iOS Dev" \
+            -configuration Debug \
+            -sdk iphoneos \
+            -archivePath ${{ runner.temp }}/iosApp-Dev.xcarchive \
+            archive \
+            DEVELOPMENT_TEAM="${{ secrets.APPLE_TEAM_ID }}"
+          xcodebuild -exportArchive \
+            -archivePath ${{ runner.temp }}/iosApp-Dev.xcarchive \
+            -exportPath ${{ runner.temp }}/ipa-dev \
+            -exportOptionsPlist iosApp/exportOptions-dev.plist
+      - name: Deploy to Firebase Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.1
+        with:
+          appId: ${{ secrets.FIREBASE_IOS_APP_ID_DEV }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_DEV }}
+          groups: testers
+          file: ${{ runner.temp }}/ipa-dev/*.ipa
+      - name: Upload iOS artifact
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: ios-dev-ipa
+          path: ${{ runner.temp }}/ipa-dev/
+
+  # ── iOS Staging ────────────────────────────────────────────────────────
+  deploy-ios-staging:
+    name: iOS (Staging) → Firebase Distribution
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'jetbrains'
+          java-version: '21'
+          cache: 'gradle'
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cache Kotlin Native (Konan)
+        uses: actions/cache@v5
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-${{ hashFiles('**/*.gradle.kts') }}
+          restore-keys: ${{ runner.os }}-konan-
+      - name: Build iOS Framework
+        run: ./gradlew :composeApp:linkDebugFrameworkIosArm64 -Pflavor=staging
+      - name: Set up Apple certificate and provisioning profile
+        uses: apple-actions/import-codesign-certs@v5
+        with:
+          p12-file-base64: ${{ secrets.APPLE_CERTIFICATE_P12_BASE64 }}
+          p12-password: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+      - name: Install provisioning profile
+        run: |
+          echo "${{ secrets.APPLE_PROVISIONING_PROFILE_STAGING_BASE64 }}" | base64 -d > profile.mobileprovision
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+      - name: Build iOS .ipa
+        run: |
+          xcodebuild -project iosApp/iosApp.xcodeproj \
+            -scheme "iOS Staging" \
+            -configuration Debug \
+            -sdk iphoneos \
+            -archivePath ${{ runner.temp }}/iosApp-Staging.xcarchive \
+            archive \
+            DEVELOPMENT_TEAM="${{ secrets.APPLE_TEAM_ID }}"
+          xcodebuild -exportArchive \
+            -archivePath ${{ runner.temp }}/iosApp-Staging.xcarchive \
+            -exportPath ${{ runner.temp }}/ipa-staging \
+            -exportOptionsPlist iosApp/exportOptions-staging.plist
+      - name: Deploy to Firebase Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.1
+        with:
+          appId: ${{ secrets.FIREBASE_IOS_APP_ID_STAGING }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_STAGING }}
+          groups: testers
+          file: ${{ runner.temp }}/ipa-staging/*.ipa
+      - name: Upload iOS artifact
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: ios-staging-ipa
+          path: ${{ runner.temp }}/ipa-staging/
+
+  # ── Desktop Dev ────────────────────────────────────────────────────────
+  deploy-desktop-dev:
+    name: Desktop (Dev) → Artifact
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'jetbrains'
+          java-version: '21'
+          cache: 'gradle'
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build Desktop (DMG)
+        run: ./gradlew :composeApp:packageDistributionForCurrentOS -Pflavor=dev
+      # TODO: Uncomment when Firebase Desktop App ID is configured
+      # - name: Deploy Desktop to Firebase Distribution
+      #   uses: wzieba/Firebase-Distribution-Github-Action@v1.7.1
+      #   with:
+      #     appId: ${{ secrets.FIREBASE_DESKTOP_APP_ID_DEV }}
+      #     serviceCredentialsFileContent: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_DEV }}
+      #     groups: testers
+      #     file: composeApp/build/compose/binaries/main/dmg/*.dmg
+      - name: Upload Desktop artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: desktop-dev-dmg
+          path: composeApp/build/compose/binaries/main/dmg/
+
+  # ── Desktop Staging ────────────────────────────────────────────────────
+  deploy-desktop-staging:
+    name: Desktop (Staging) → Artifact
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'jetbrains'
+          java-version: '21'
+          cache: 'gradle'
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build Desktop (DMG)
+        run: ./gradlew :composeApp:packageDistributionForCurrentOS -Pflavor=staging
+      # TODO: Uncomment when Firebase Desktop App ID is configured
+      # - name: Deploy Desktop to Firebase Distribution
+      #   uses: wzieba/Firebase-Distribution-Github-Action@v1.7.1
+      #   with:
+      #     appId: ${{ secrets.FIREBASE_DESKTOP_APP_ID_STAGING }}
+      #     serviceCredentialsFileContent: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_STAGING }}
+      #     groups: testers
+      #     file: composeApp/build/compose/binaries/main/dmg/*.dmg
+      - name: Upload Desktop artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: desktop-staging-dmg
+          path: composeApp/build/compose/binaries/main/dmg/
+
+  # ── Web Dev ────────────────────────────────────────────────────────────
+  deploy-web-dev:
+    name: Web (Dev) → Firebase Hosting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'jetbrains'
+          java-version: '21'
+          cache: 'gradle'
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build Web (Wasm)
+        run: ./gradlew :composeApp:wasmJsBrowserDistribution -Pflavor=dev
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON_DEV }}"
+          projectId: "${{ secrets.FIREBASE_PROJECT_ID_DEV }}"
+          channelId: live
+      - name: Upload Web artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: web-dev-bundle
+          path: composeApp/build/dist/wasmJs/productionExecutable/
+
+  # ── Web Staging ────────────────────────────────────────────────────────
+  deploy-web-staging:
+    name: Web (Staging) → Firebase Hosting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'jetbrains'
+          java-version: '21'
+          cache: 'gradle'
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build Web (Wasm)
+        run: ./gradlew :composeApp:wasmJsBrowserDistribution -Pflavor=staging
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON_STAGING }}"
+          projectId: "${{ secrets.FIREBASE_PROJECT_ID_STAGING }}"
+          channelId: live
+      - name: Upload Web artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: web-staging-bundle
+          path: composeApp/build/dist/wasmJs/productionExecutable/

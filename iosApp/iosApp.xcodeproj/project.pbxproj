@@ -7,16 +7,38 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		BA2470FCC1C52D40E03506A7 /* PortfolioCompose.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PortfolioCompose.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BA2470FCC1C52D40E03506A7 /* PortfolioCompose Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PortfolioCompose Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AAA001000000000000000001 /* PortfolioCompose Staging.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PortfolioCompose Staging.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AAA002000000000000000001 /* PortfolioCompose.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PortfolioCompose.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		FA29E4B0D4602C8DD66D8153 /* Exceptions for "iosApp" folder in "iosApp" target */ = {
+		FA29E4B0D4602C8DD66D8153 /* Exceptions for "iosApp" folder in "Dev" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				Info-Dev.plist,
+				Info-Staging.plist,
+				Info-Prod.plist,
 			);
-			target = 0997F27B28D3C753D0393ECC /* iosApp */;
+			target = 0997F27B28D3C753D0393ECC /* Dev */;
+		};
+		AAA00100000000000000000A /* Exceptions for "iosApp" folder in "Staging" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info-Dev.plist,
+				Info-Staging.plist,
+				Info-Prod.plist,
+			);
+			target = AAA001000000000000000002 /* Staging */;
+		};
+		AAA00200000000000000000A /* Exceptions for "iosApp" folder in "Prod" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info-Dev.plist,
+				Info-Staging.plist,
+				Info-Prod.plist,
+			);
+			target = AAA002000000000000000002 /* Prod */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -24,7 +46,9 @@
 		7604EC91AED96E5169A3F856 /* iosApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				FA29E4B0D4602C8DD66D8153 /* Exceptions for "iosApp" folder in "iosApp" target */,
+				FA29E4B0D4602C8DD66D8153 /* Exceptions for "iosApp" folder in "Dev" target */,
+				AAA00100000000000000000A /* Exceptions for "iosApp" folder in "Staging" target */,
+				AAA00200000000000000000A /* Exceptions for "iosApp" folder in "Prod" target */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -38,6 +62,20 @@
 
 /* Begin PBXFrameworksBuildPhase section */
 		B30850C1B9FD1E2F4F12CF5A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AAA001000000000000000005 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AAA002000000000000000005 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -59,7 +97,9 @@
 		4DEAE0D7DF115539860C0730 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BA2470FCC1C52D40E03506A7 /* PortfolioCompose.app */,
+				BA2470FCC1C52D40E03506A7 /* PortfolioCompose Dev.app */,
+				AAA001000000000000000001 /* PortfolioCompose Staging.app */,
+				AAA002000000000000000001 /* PortfolioCompose.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -67,14 +107,15 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0997F27B28D3C753D0393ECC /* iosApp */ = {
+		0997F27B28D3C753D0393ECC /* Dev */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C041C76EBC22D63275E8EB13 /* Build configuration list for PBXNativeTarget "iosApp" */;
+			buildConfigurationList = C041C76EBC22D63275E8EB13 /* Build configuration list for PBXNativeTarget "Dev" */;
 			buildPhases = (
 				7D2702862FE8B8447515E171 /* Compile Kotlin Framework */,
 				37BBCA0E72D9FC5DEA1F5DAB /* Sources */,
 				B30850C1B9FD1E2F4F12CF5A /* Frameworks */,
 				6D145EF90B5BE547F6922A3F /* Resources */,
+				BBB001000000000000000001 /* Copy Firebase Config */,
 			);
 			buildRules = (
 			);
@@ -83,11 +124,59 @@
 			fileSystemSynchronizedGroups = (
 				7604EC91AED96E5169A3F856 /* iosApp */,
 			);
-			name = iosApp;
+			name = Dev;
 			packageProductDependencies = (
 			);
 			productName = iosApp;
-			productReference = BA2470FCC1C52D40E03506A7 /* PortfolioCompose.app */;
+			productReference = BA2470FCC1C52D40E03506A7 /* PortfolioCompose Dev.app */;
+			productType = "com.apple.product-type.application";
+		};
+		AAA001000000000000000002 /* Staging */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AAA001000000000000000009 /* Build configuration list for PBXNativeTarget "Staging" */;
+			buildPhases = (
+				AAA001000000000000000003 /* Compile Kotlin Framework */,
+				AAA001000000000000000004 /* Sources */,
+				AAA001000000000000000005 /* Frameworks */,
+				AAA001000000000000000006 /* Resources */,
+				BBB001000000000000000002 /* Copy Firebase Config */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				7604EC91AED96E5169A3F856 /* iosApp */,
+			);
+			name = Staging;
+			packageProductDependencies = (
+			);
+			productName = iosApp;
+			productReference = AAA001000000000000000001 /* PortfolioCompose Staging.app */;
+			productType = "com.apple.product-type.application";
+		};
+		AAA002000000000000000002 /* Prod */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AAA002000000000000000009 /* Build configuration list for PBXNativeTarget "Prod" */;
+			buildPhases = (
+				AAA002000000000000000003 /* Compile Kotlin Framework */,
+				AAA002000000000000000004 /* Sources */,
+				AAA002000000000000000005 /* Frameworks */,
+				AAA002000000000000000006 /* Resources */,
+				BBB001000000000000000003 /* Copy Firebase Config */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				7604EC91AED96E5169A3F856 /* iosApp */,
+			);
+			name = Prod;
+			packageProductDependencies = (
+			);
+			productName = iosApp;
+			productReference = AAA002000000000000000001 /* PortfolioCompose.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -101,6 +190,12 @@
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
 					0997F27B28D3C753D0393ECC = {
+						CreatedOnToolsVersion = 16.2;
+					};
+					AAA001000000000000000002 = {
+						CreatedOnToolsVersion = 16.2;
+					};
+					AAA002000000000000000002 = {
 						CreatedOnToolsVersion = 16.2;
 					};
 				};
@@ -119,13 +214,29 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				0997F27B28D3C753D0393ECC /* iosApp */,
+				0997F27B28D3C753D0393ECC /* Dev */,
+				AAA001000000000000000002 /* Staging */,
+				AAA002000000000000000002 /* Prod */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		6D145EF90B5BE547F6922A3F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AAA001000000000000000006 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AAA002000000000000000006 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -152,12 +263,118 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n  echo \"Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \\\"YES\\\"\"\n  exit 0\nfi\ncd \"$SRCROOT/..\"\n./gradlew :composeApp:embedAndSignAppleFrameworkForXcode\n";
+			shellScript = "if [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n  echo \"Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \\\"YES\\\"\"\n  exit 0\nfi\ncd \"$SRCROOT/..\"\n./gradlew :composeApp:embedAndSignAppleFrameworkForXcode -Pflavor=dev\n";
+		};
+		AAA001000000000000000003 /* Compile Kotlin Framework */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Compile Kotlin Framework";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n  echo \"Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \\\"YES\\\"\"\n  exit 0\nfi\ncd \"$SRCROOT/..\"\n./gradlew :composeApp:embedAndSignAppleFrameworkForXcode -Pflavor=staging\n";
+		};
+		AAA002000000000000000003 /* Compile Kotlin Framework */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Compile Kotlin Framework";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n  echo \"Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \\\"YES\\\"\"\n  exit 0\nfi\ncd \"$SRCROOT/..\"\n./gradlew :composeApp:embedAndSignAppleFrameworkForXcode -Pflavor=prod\n";
+		};
+		BBB001000000000000000001 /* Copy Firebase Config */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Firebase Config";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"${SRCROOT}/iosApp/Firebase/GoogleService-Info-Dev.plist\" \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist\"\n";
+		};
+		BBB001000000000000000002 /* Copy Firebase Config */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Firebase Config";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"${SRCROOT}/iosApp/Firebase/GoogleService-Info-Staging.plist\" \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist\"\n";
+		};
+		BBB001000000000000000003 /* Copy Firebase Config */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Firebase Config";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"${SRCROOT}/iosApp/Firebase/GoogleService-Info-Prod.plist\" \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		37BBCA0E72D9FC5DEA1F5DAB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AAA001000000000000000004 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AAA002000000000000000004 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -290,6 +507,7 @@
 			};
 			name = Release;
 		};
+/* Dev target configs */
 		15FD30CEE306CE248124AF12 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -302,7 +520,7 @@
 				DEVELOPMENT_TEAM = "${TEAM_ID}";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = iosApp/Info.plist;
+				INFOPLIST_FILE = iosApp/Info-Dev.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -312,6 +530,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				CURRENT_PROJECT_VERSION = 10000;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ptut.portfolio.dev";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -330,7 +551,7 @@
 				DEVELOPMENT_TEAM = "${TEAM_ID}";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = iosApp/Info.plist;
+				INFOPLIST_FILE = iosApp/Info-Dev.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -340,6 +561,135 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				CURRENT_PROJECT_VERSION = 10000;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ptut.portfolio.dev";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* Staging target configs */
+		AAA001000000000000000007 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
+				DEVELOPMENT_TEAM = "${TEAM_ID}";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = iosApp/Info-Staging.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				CURRENT_PROJECT_VERSION = 10000;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ptut.portfolio.staging";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AAA001000000000000000008 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
+				DEVELOPMENT_TEAM = "${TEAM_ID}";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = iosApp/Info-Staging.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				CURRENT_PROJECT_VERSION = 10000;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ptut.portfolio.staging";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* Prod target configs */
+		AAA002000000000000000007 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
+				DEVELOPMENT_TEAM = "${TEAM_ID}";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = iosApp/Info-Prod.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				CURRENT_PROJECT_VERSION = 10000;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ptut.portfolio";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AAA002000000000000000008 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
+				DEVELOPMENT_TEAM = "${TEAM_ID}";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = iosApp/Info-Prod.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				CURRENT_PROJECT_VERSION = 10000;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ptut.portfolio";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -358,11 +708,29 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C041C76EBC22D63275E8EB13 /* Build configuration list for PBXNativeTarget "iosApp" */ = {
+		C041C76EBC22D63275E8EB13 /* Build configuration list for PBXNativeTarget "Dev" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				15FD30CEE306CE248124AF12 /* Debug */,
 				8E8064FB6513B498C24EAF89 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AAA001000000000000000009 /* Build configuration list for PBXNativeTarget "Staging" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AAA001000000000000000007 /* Debug */,
+				AAA001000000000000000008 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AAA002000000000000000009 /* Build configuration list for PBXNativeTarget "Prod" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AAA002000000000000000007 /* Debug */,
+				AAA002000000000000000008 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

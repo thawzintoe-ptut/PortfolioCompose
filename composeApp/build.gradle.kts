@@ -11,6 +11,19 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
 }
 
+val flavor: String by project
+val suffix = when (flavor) {
+    "dev" -> ".dev"
+    "staging" -> ".staging"
+    else -> ""
+}
+
+val versionMajor: String by project
+val versionMinor: String by project
+val versionPatch: String by project
+val appVersionCode = versionMajor.toInt() * 10000 + versionMinor.toInt() * 100 + versionPatch.toInt()
+val appVersionName = "$versionMajor.$versionMinor.$versionPatch"
+
 kotlin {
     androidTarget {
         compilerOptions {
@@ -47,6 +60,7 @@ kotlin {
             implementation(libs.androidx.activity.compose)
         }
         commonMain.dependencies {
+            implementation(project(":config:$flavor"))
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
@@ -76,10 +90,17 @@ android {
 
     defaultConfig {
         applicationId = "com.ptut.portfolio"
+        applicationIdSuffix = suffix
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = appVersionCode
+        versionName = appVersionName
+
+        when (flavor) {
+            "dev" -> resValue("string", "app_name", "Portfolio Dev")
+            "staging" -> resValue("string", "app_name", "Portfolio Staging")
+            else -> resValue("string", "app_name", "Portfolio")
+        }
     }
     packaging {
         resources {
@@ -108,7 +129,30 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.ptut.portfolio"
-            packageVersion = "1.0.0"
+            packageVersion = appVersionName
         }
     }
+}
+
+tasks.register("copyFirebaseConfig") {
+    val source = file("${rootProject.projectDir}/config/$flavor/google-services.json")
+    val target = file("${projectDir}/google-services.json")
+    doLast {
+        if (source.exists()) {
+            source.copyTo(target, overwrite = true)
+        }
+    }
+}
+
+tasks.named("preBuild") {
+    dependsOn("copyFirebaseConfig")
+}
+
+tasks.register("runDebug", Exec::class) {
+    dependsOn("clean", "uninstallDebug", "installDebug")
+    val adb = android.adbExecutable.absolutePath
+    commandLine(
+        adb, "shell", "am", "start", "-n",
+        "com.ptut.portfolio$suffix/com.ptut.portfolio.MainActivity"
+    )
 }

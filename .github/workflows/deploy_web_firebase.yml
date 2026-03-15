@@ -1,0 +1,62 @@
+name: Deploy Web to Firebase Hosting
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+    inputs:
+      flavor:
+        description: 'Build flavor'
+        required: true
+        default: 'prod'
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+
+env:
+  FLAVOR: ${{ inputs.flavor || 'prod' }}
+
+jobs:
+  deploy-web:
+    name: Build and Deploy Web (${{ inputs.flavor || 'prod' }})
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'jetbrains'
+          cache: 'gradle'
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Web (Wasm)
+        run: ./gradlew :composeApp:wasmJsBrowserDistribution -Pflavor=${{ env.FLAVOR }}
+
+      - name: Set flavor-specific Firebase config
+        id: firebase
+        env:
+          SA_DEV: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON_DEV }}
+          SA_STAGING: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON_STAGING }}
+          SA_PROD: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON_PROD }}
+          PID_DEV: ${{ secrets.FIREBASE_PROJECT_ID_DEV }}
+          PID_STAGING: ${{ secrets.FIREBASE_PROJECT_ID_STAGING }}
+          PID_PROD: ${{ secrets.FIREBASE_PROJECT_ID_PROD }}
+        run: |
+          case "${{ env.FLAVOR }}" in
+            dev)     echo "sa=$SA_DEV" >> $GITHUB_OUTPUT; echo "pid=$PID_DEV" >> $GITHUB_OUTPUT ;;
+            staging) echo "sa=$SA_STAGING" >> $GITHUB_OUTPUT; echo "pid=$PID_STAGING" >> $GITHUB_OUTPUT ;;
+            prod)    echo "sa=$SA_PROD" >> $GITHUB_OUTPUT; echo "pid=$PID_PROD" >> $GITHUB_OUTPUT ;;
+          esac
+
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ steps.firebase.outputs.sa }}"
+          projectId: "${{ steps.firebase.outputs.pid }}"
+          channelId: live
+          entryPoint: .
