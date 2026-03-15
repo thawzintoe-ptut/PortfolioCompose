@@ -31,6 +31,7 @@ jobs:
           java-version: '21'
           distribution: 'jetbrains'
           cache: 'gradle'
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Web (Wasm)
         run: ./gradlew :composeApp:wasmJsBrowserDistribution -Pflavor=${{ env.FLAVOR }}

@@ -28,6 +28,7 @@ jobs:
           distribution: 'jetbrains'
           java-version: '21'
           cache: 'gradle'
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Assemble app debug APK
         run: ./gradlew :composeApp:assembleDebug -Pflavor=${{ env.FLAVOR }}
       - name: Upload app APK

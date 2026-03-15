@@ -31,6 +31,7 @@ jobs:
           distribution: 'jetbrains'
           java-version: '21'
           cache: 'gradle'
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Set up Google Services JSON
         env:
           GS_DEV: ${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON_DEV }}

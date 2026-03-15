@@ -17,6 +17,7 @@ jobs:
           java-version: '21'
           distribution: 'jetbrains'
           cache: 'gradle'
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Cache Kotlin Native (Konan)
         uses: actions/cache@v5

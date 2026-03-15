@@ -18,6 +18,7 @@ jobs:
           distribution: 'jetbrains'
           java-version: '21'
           cache: 'gradle'
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Set up Google Services JSON
         run: echo "${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON_DEV }}" | base64 -d > composeApp/google-services.json
       - name: Build debug APK
@@ -42,6 +43,7 @@ jobs:
           distribution: 'jetbrains'
           java-version: '21'
           cache: 'gradle'
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Set up Google Services JSON
         run: echo "${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON_STAGING }}" | base64 -d > composeApp/google-services.json
       - name: Build debug APK
@@ -66,6 +68,7 @@ jobs:
           distribution: 'jetbrains'
           java-version: '21'
           cache: 'gradle'
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Cache Kotlin Native (Konan)
         uses: actions/cache@v5
         with:
@@ -123,6 +126,7 @@ jobs:
           distribution: 'jetbrains'
           java-version: '21'
           cache: 'gradle'
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Cache Kotlin Native (Konan)
         uses: actions/cache@v5
         with:
@@ -180,6 +184,7 @@ jobs:
           distribution: 'jetbrains'
           java-version: '21'
           cache: 'gradle'
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Desktop (DMG)
         run: ./gradlew :composeApp:packageDistributionForCurrentOS -Pflavor=dev
       # TODO: Uncomment when Firebase Desktop App ID is configured
@@ -208,6 +213,7 @@ jobs:
           distribution: 'jetbrains'
           java-version: '21'
           cache: 'gradle'
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Desktop (DMG)
         run: ./gradlew :composeApp:packageDistributionForCurrentOS -Pflavor=staging
       # TODO: Uncomment when Firebase Desktop App ID is configured
@@ -236,6 +242,7 @@ jobs:
           distribution: 'jetbrains'
           java-version: '21'
           cache: 'gradle'
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Web (Wasm)
         run: ./gradlew :composeApp:wasmJsBrowserDistribution -Pflavor=dev
       - name: Deploy to Firebase Hosting
@@ -263,6 +270,7 @@ jobs:
           distribution: 'jetbrains'
           java-version: '21'
           cache: 'gradle'
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Web (Wasm)
         run: ./gradlew :composeApp:wasmJsBrowserDistribution -Pflavor=staging
       - name: Deploy to Firebase Hosting

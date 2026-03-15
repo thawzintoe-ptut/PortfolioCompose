@@ -31,6 +31,7 @@ jobs:
           distribution: 'jetbrains'
           java-version: '21'
           cache: 'gradle'
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Update build version
         run: |
           IFS='.' read -r MAJOR MINOR PATCH <<< "${{ inputs.versionName }}"

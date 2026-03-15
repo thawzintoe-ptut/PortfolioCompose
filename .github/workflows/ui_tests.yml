@@ -17,6 +17,7 @@ jobs:
           java-version: '21'
           distribution: 'jetbrains'
           cache: 'gradle'
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -39,6 +40,7 @@ jobs:
           java-version: '21'
           distribution: 'jetbrains'
           cache: 'gradle'
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run Web Tests (Headless)
         run: ./gradlew :composeApp:wasmJsBrowserTest
         # Note: For full UI testing with Selenium/Playwright, additional setup would be required.
