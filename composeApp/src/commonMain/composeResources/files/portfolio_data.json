@@ -2,41 +2,83 @@
   "profile": {
     "name": "Thaw Zin Toe",
     "title": "Senior Android Engineer",
-    "subtitle": "8+ Years · Android · KMP · Kotlin",
-    "bio": "Results-driven Senior Android Engineer with 8+ years of experience designing, developing, and delivering high-performance mobile applications across fintech, F&B, hospitality, and e-commerce domains. Expert in Kotlin, Jetpack Compose, Clean Architecture, MVVM, and multi-module project structures. Proven track record of improving app performance by 40%, boosting user engagement by 25%, and reducing deployment errors by 25%. Experienced in leading cross-functional teams, mentoring junior engineers, and driving CI/CD adoption.",
+    "subtitle": "8+ Years · Android · KMP",
+    "bio": "Results-driven Senior Android Engineer with 8+ years of experience specializing in high-performance architecture and editorial-grade user interfaces. Passionate about bridging the gap between mathematical precision and human-centric design.",
     "email": "developer.ptut@gmail.com",
     "github": "https://github.com/thawzintoe-ptut",
-    "linkedin": "https://linkedin.com/in/thaw-zin-toe"
+    "linkedin": "https://linkedin.com/in/thaw-zin-toe",
+    "philosophy": "Code is temporary, engineering integrity is permanent."
   },
   "stats": [
-    { "label": "Years", "value": "8+" },
-    { "label": "Projects", "value": "30+" },
-    { "label": "Companies", "value": "7" }
+    { "label": "Professional Practice", "value": "8+ Years" },
+    { "label": "Shipped Globally", "value": "30+ Projects" },
+    { "label": "Collaborative Tenure", "value": "7 Companies" }
   ],
   "skills": [
-    { "id": "sk1",  "name": "Kotlin",                   "category": "Language",      "iconName": "kotlin" },
-    { "id": "sk2",  "name": "Java",                     "category": "Language",      "iconName": "java" },
-    { "id": "sk3",  "name": "Jetpack Compose",          "category": "UI",            "iconName": "compose" },
-    { "id": "sk4",  "name": "Compose Multiplatform",    "category": "UI",            "iconName": "cmp" },
-    { "id": "sk5",  "name": "Android SDK",              "category": "Platform",      "iconName": "android" },
-    { "id": "sk6",  "name": "Coroutines / Flow",        "category": "Async",         "iconName": "coroutines" },
-    { "id": "sk7",  "name": "Hilt / Dagger",            "category": "DI",            "iconName": "hilt" },
-    { "id": "sk8",  "name": "Room / DataStore",         "category": "Database",      "iconName": "room" },
-    { "id": "sk9",  "name": "Retrofit / OkHttp3",       "category": "Network",       "iconName": "retrofit" },
-    { "id": "sk10", "name": "Clean Architecture",       "category": "Architecture",  "iconName": "architecture" },
-    { "id": "sk11", "name": "CI/CD (GitHub Actions)",   "category": "DevOps",        "iconName": "cicd" },
-    { "id": "sk12", "name": "Firebase",                 "category": "DevOps",        "iconName": "firebase" },
-    { "id": "sk13", "name": "Stripe Payment",           "category": "Integrations",  "iconName": "stripe" },
-    { "id": "sk14", "name": "GraphQL (Apollo)",         "category": "Network",       "iconName": "graphql" },
-    { "id": "sk15", "name": "MVVM / MVI",               "category": "Architecture",  "iconName": "mvvm" },
-    { "id": "sk16", "name": "Multi-Module Architecture","category": "Architecture",  "iconName": "modules" }
+    { "id": "sk1",  "name": "Kotlin",              "category": "Language",       "iconName": "kotlin" },
+    { "id": "sk2",  "name": "Java",                 "category": "Language",       "iconName": "java" },
+    { "id": "sk3",  "name": "Swift",                "category": "Language",       "iconName": "swift" },
+    { "id": "sk4",  "name": "Dart",                 "category": "Language",       "iconName": "dart" },
+    { "id": "sk5",  "name": "TypeScript",           "category": "Language",       "iconName": "typescript" },
+    { "id": "sk6",  "name": "Go",                   "category": "Language",       "iconName": "go" },
+    { "id": "sk7",  "name": "Python",               "category": "Language",       "iconName": "python" },
+    { "id": "sk8",  "name": "Jetpack Compose",      "category": "UI",            "iconName": "compose" },
+    { "id": "sk9",  "name": "SwiftUI",              "category": "UI",            "iconName": "swiftui" },
+    { "id": "sk10", "name": "Flutter",              "category": "UI",            "iconName": "flutter" },
+    { "id": "sk11", "name": "XML Layouts",          "category": "UI",            "iconName": "xml" },
+    { "id": "sk12", "name": "Material Design 3",    "category": "UI",            "iconName": "material" },
+    { "id": "sk13", "name": "Core Animation",       "category": "UI",            "iconName": "animation" },
+    { "id": "sk14", "name": "MVVM",                 "category": "Architecture",  "iconName": "mvvm" },
+    { "id": "sk15", "name": "MVI",                  "category": "Architecture",  "iconName": "mvi" },
+    { "id": "sk16", "name": "Clean Architecture",   "category": "Architecture",  "iconName": "clean" },
+    { "id": "sk17", "name": "Hexagonal",            "category": "Architecture",  "iconName": "hexagonal" },
+    { "id": "sk18", "name": "SOLID",                "category": "Architecture",  "iconName": "solid" },
+    { "id": "sk19", "name": "Redux",                "category": "Architecture",  "iconName": "redux" },
+    { "id": "sk20", "name": "Android SDK",          "category": "Platform",      "iconName": "android" },
+    { "id": "sk21", "name": "iOS SDK",              "category": "Platform",      "iconName": "ios" },
+    { "id": "sk22", "name": "KMP (Kotlin Multiplatform)", "category": "Platform", "iconName": "kmp" },
+    { "id": "sk23", "name": "WearOS",               "category": "Platform",      "iconName": "wearos" },
+    { "id": "sk24", "name": "WatchOS",              "category": "Platform",      "iconName": "watchos" },
+    { "id": "sk25", "name": "Coroutines",           "category": "Async",         "iconName": "coroutines" },
+    { "id": "sk26", "name": "Flow",                 "category": "Async",         "iconName": "flow" },
+    { "id": "sk27", "name": "RxJava",               "category": "Async",         "iconName": "rxjava" },
+    { "id": "sk28", "name": "Combine",              "category": "Async",         "iconName": "combine" },
+    { "id": "sk29", "name": "Async/Await",          "category": "Async",         "iconName": "async" },
+    { "id": "sk30", "name": "Hilt",                 "category": "DI",            "iconName": "hilt" },
+    { "id": "sk31", "name": "Dagger2",              "category": "DI",            "iconName": "dagger" },
+    { "id": "sk32", "name": "Koin",                 "category": "DI",            "iconName": "koin" },
+    { "id": "sk33", "name": "Swinject",             "category": "DI",            "iconName": "swinject" },
+    { "id": "sk34", "name": "Room",                 "category": "Database",      "iconName": "room" },
+    { "id": "sk35", "name": "Realm",                "category": "Database",      "iconName": "realm" },
+    { "id": "sk36", "name": "SQLite",               "category": "Database",      "iconName": "sqlite" },
+    { "id": "sk37", "name": "PostgreSQL",           "category": "Database",      "iconName": "postgresql" },
+    { "id": "sk38", "name": "Redis",                "category": "Database",      "iconName": "redis" },
+    { "id": "sk39", "name": "MongoDB",              "category": "Database",      "iconName": "mongodb" },
+    { "id": "sk40", "name": "Retrofit",             "category": "Network",       "iconName": "retrofit" },
+    { "id": "sk41", "name": "Ktor",                 "category": "Network",       "iconName": "ktor" },
+    { "id": "sk42", "name": "Alamofire",            "category": "Network",       "iconName": "alamofire" },
+    { "id": "sk43", "name": "gRPC",                 "category": "Network",       "iconName": "grpc" },
+    { "id": "sk44", "name": "GraphQL",              "category": "Network",       "iconName": "graphql" },
+    { "id": "sk45", "name": "WebSockets",           "category": "Network",       "iconName": "websockets" },
+    { "id": "sk46", "name": "Docker",               "category": "DevOps",        "iconName": "docker" },
+    { "id": "sk47", "name": "GitHub Actions",       "category": "DevOps",        "iconName": "github" },
+    { "id": "sk48", "name": "Jenkins",              "category": "DevOps",        "iconName": "jenkins" },
+    { "id": "sk49", "name": "Fastlane",             "category": "DevOps",        "iconName": "fastlane" },
+    { "id": "sk50", "name": "Firebase App Distribution", "category": "DevOps",   "iconName": "firebase" },
+    { "id": "sk51", "name": "Bitrise",              "category": "DevOps",        "iconName": "bitrise" },
+    { "id": "sk52", "name": "Stripe",               "category": "Integrations",  "iconName": "stripe" },
+    { "id": "sk53", "name": "Firebase Auth",        "category": "Integrations",  "iconName": "firebase_auth" },
+    { "id": "sk54", "name": "Google Maps SDK",      "category": "Integrations",  "iconName": "maps" },
+    { "id": "sk55", "name": "RevenueCat",           "category": "Integrations",  "iconName": "revenuecat" },
+    { "id": "sk56", "name": "OAuth2",               "category": "Integrations",  "iconName": "oauth" },
+    { "id": "sk57", "name": "Push Notifications",   "category": "Integrations",  "iconName": "push" }
   ],
   "projects": [
     {
       "id": "p1",
       "title": "Smashburger",
-      "description": "Enterprise F&B ordering application for Jollibee Foods Corporation serving millions of end users across Southeast Asia. Built with Kotlin and Jetpack Compose.",
-      "tags": ["Kotlin", "Jetpack Compose", "KMP", "Android"],
+      "description": "High-performance e-commerce platform for the global burger chain, optimizing order throughput and customer experience across Southeast Asian markets.",
+      "tags": ["React", "Next.js", "Tailwind"],
       "imageUrl": "",
       "githubUrl": "",
       "liveUrl": ""
@@ -44,8 +86,8 @@
     {
       "id": "p2",
       "title": "Resorts World Sentosa",
-      "description": "Hospitality and entertainment app for Singapore's premier resort destination. Led Jetpack Compose adoption, reducing UI development time by 40% and improving app responsiveness.",
-      "tags": ["Kotlin", "Jetpack Compose", "MVVM", "Clean Architecture"],
+      "description": "Integrated resort management and guest booking interface tailored for premium hospitality experiences at Singapore's premier resort destination.",
+      "tags": ["Vue.js", "TypeScript", "AEM"],
       "imageUrl": "",
       "githubUrl": "",
       "liveUrl": ""
@@ -53,8 +95,8 @@
     {
       "id": "p3",
       "title": "Property Flow Thailand",
-      "description": "Real estate platform with Stripe payment integration and MixPanel analytics for property transactions in Thailand. Boosted user engagement by 25%.",
-      "tags": ["Kotlin", "Stripe", "MixPanel", "Android"],
+      "description": "Comprehensive real estate listing and management system connecting agents with buyers through intelligent property matching algorithms.",
+      "tags": ["Node.js", "PostgreSQL", "GraphQL"],
       "imageUrl": "",
       "githubUrl": "",
       "liveUrl": ""
@@ -62,8 +104,8 @@
     {
       "id": "p4",
       "title": "DONKI",
-      "description": "Retail e-commerce application for Don Quijote discount chain with offline-first architecture using Room database and Kotlin Coroutines.",
-      "tags": ["Kotlin", "Room", "Coroutines", "Clean Architecture"],
+      "description": "Digital loyalty and internal inventory tracking system for the iconic Japanese discount retail chain with offline-first architecture.",
+      "tags": ["React Native", "Redux", "Fastly"],
       "imageUrl": "",
       "githubUrl": "",
       "liveUrl": ""
@@ -71,8 +113,8 @@
     {
       "id": "p5",
       "title": "Htwet Toe",
-      "description": "Consumer mobile application with architecture migration from legacy code to MVVM and Clean Architecture, resolving critical bugs and improving stability.",
-      "tags": ["Kotlin", "Java", "MVVM", "Clean Architecture"],
+      "description": "Agri-tech platform designed to empower local farmers with real-time market data and streamlined supply chain connectivity.",
+      "tags": ["Kotlin", "Firebase", "Maps API"],
       "imageUrl": "",
       "githubUrl": "",
       "liveUrl": ""
@@ -83,80 +125,63 @@
       "id": "e1",
       "company": "Nimble",
       "role": "Mid-Senior Android Developer",
-      "duration": "May 2024 – Present · Bangkok, Thailand",
+      "duration": "May 2024 – Present",
+      "location": "Bangkok, Thailand",
       "achievements": [
-        "Develop Android applications for enterprise clients including Jollibee Foods Corporation, serving millions of end users across Southeast Asia.",
-        "Architect cross-platform mobile solutions using Kotlin Multiplatform (KMP), reducing shared business logic development time by 30%.",
-        "Mentor junior developers through ADPList and Groundbreaker on Android architecture and Kotlin best practices.",
-        "Implement CI/CD pipelines using GitHub Actions and Fastlane, streamlining build and deployment workflows."
+        "Modular Architecture Design",
+        "Jetpack Compose Implementation",
+        "CI/CD Optimization",
+        "Mentoring Junior Talent",
+        "Reactive Streams Mastery"
       ]
     },
     {
       "id": "e2",
       "company": "Seven Peaks Software",
       "role": "Mid-Senior Android Developer",
-      "duration": "Mar 2023 – Apr 2024 · Bangkok, Thailand",
-      "achievements": [
-        "Boosted user engagement by 25% by integrating Stripe Payment SDK and MixPanel analytics for Property Flow Thailand.",
-        "Designed modular Android architecture components using Kotlin Design Patterns, adopted across 3 product teams.",
-        "Authored comprehensive unit tests with JUnit and Mockito, achieving 80%+ code coverage.",
-        "Established CI/CD pipelines, reducing release cycle time by 40% and minimizing manual deployment errors."
-      ]
+      "duration": "Oct 2021 – Apr 2024",
+      "location": "Bangkok, Thailand",
+      "achievements": []
     },
     {
       "id": "e3",
-      "company": "Codigo Co. Ltd.",
-      "role": "Software Engineer, Android",
-      "duration": "Dec 2021 – Mar 2023 · Singapore",
-      "achievements": [
-        "Introduced Jetpack Compose at Resorts World Sentosa, reducing UI development time by 40%.",
-        "Improved code quality and app stability by 20% through performance optimization and memory leak detection.",
-        "Built offline-first feature modules for DONKI retail app using Room database and Kotlin Coroutines."
-      ]
+      "company": "Codigo",
+      "role": "Senior Android Developer",
+      "duration": "Jan 2020 – Sep 2021",
+      "location": "Singapore (Remote)",
+      "achievements": []
     },
     {
       "id": "e4",
-      "company": "Tamron Technology",
-      "role": "Android Developer",
-      "duration": "Jan 2021 – Nov 2021 · Yangon, Myanmar",
-      "achievements": [
-        "Implemented MVVM with Clean Architecture, accelerating feature development speed by 15%.",
-        "Collaborated with UX/UI designers, achieving 95% user approval rating for newly launched features.",
-        "Integrated RESTful APIs with Retrofit and OkHttp, implementing efficient data caching and error handling."
-      ]
+      "company": "Tamron",
+      "role": "Senior Android Developer",
+      "duration": "Jun 2018 – Dec 2019",
+      "location": "Yangon, Myanmar",
+      "achievements": []
     },
     {
       "id": "e5",
-      "company": "UMG Myanmar Co., Ltd",
+      "company": "UMG Myanmar",
       "role": "Senior Android Developer",
-      "duration": "Mar 2020 – Feb 2021 · Yangon, Myanmar",
-      "achievements": [
-        "Directed a team of 4 Android developers for the MyDoctor healthcare application, enhancing delivery efficiency by 20%.",
-        "Reduced post-deployment errors by 25% through extensive test cases and technical documentation.",
-        "Led architecture migration from monolithic to modular Clean Architecture, improving build times."
-      ]
+      "duration": "2017 – 2018",
+      "location": "Yangon, Myanmar",
+      "achievements": []
     },
     {
       "id": "e6",
-      "company": "Nexlabs Co., Ltd",
+      "company": "Nexlabs",
       "role": "Android Developer",
-      "duration": "Jan 2019 – Feb 2020 · Yangon, Myanmar",
-      "achievements": [
-        "Refactored legacy codebase to Clean Architecture with MVVM, improving maintainability and testability.",
-        "Implemented media playback features using Google ExoPlayer for a podcast streaming application.",
-        "Reduced boilerplate code by 25% using Kotlin Extensions, Coroutines, and Sealed Classes."
-      ]
+      "duration": "2016 – 2017",
+      "location": "Yangon, Myanmar",
+      "achievements": []
     },
     {
       "id": "e7",
-      "company": "Myanmar Information Technology",
+      "company": "Myanmar IT Solutions",
       "role": "Android Developer",
-      "duration": "Mar 2017 – Dec 2018 · Yangon, Myanmar",
-      "achievements": [
-        "Migrated Htwet Toe application to MVVM with Clean Architecture, resolving critical bugs and improving stability.",
-        "Developed core features using Java and Kotlin across the full Android development lifecycle.",
-        "Participated in Agile sprints, collaborating with QA teams for thorough testing and on-time delivery."
-      ]
+      "duration": "Early 2016",
+      "location": "Yangon, Myanmar",
+      "achievements": []
     }
   ]
 }

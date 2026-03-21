@@ -130,6 +130,16 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.ptut.portfolio"
             packageVersion = appVersionName
+
+            macOS {
+                iconFile.set(project.file("src/jvmMain/resources/app-icon.icns"))
+            }
+            linux {
+                iconFile.set(project.file("src/jvmMain/resources/app-icon.png"))
+            }
+            windows {
+                iconFile.set(project.file("src/jvmMain/resources/app-icon.png"))
+            }
         }
     }
 }

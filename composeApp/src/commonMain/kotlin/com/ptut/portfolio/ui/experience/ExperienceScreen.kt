@@ -1,43 +1,33 @@
 package com.ptut.portfolio.ui.experience
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExpandLess
-import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ptut.portfolio.data.model.Experience
 import com.ptut.portfolio.data.model.PortfolioData
@@ -50,177 +40,188 @@ fun ExperienceScreen(
     windowWidthClass: WindowWidthClass,
 ) {
     val experiences = portfolioData?.experiences ?: emptyList()
+    val profile = portfolioData?.profile
 
-    LazyColumn(
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp, vertical = 16.dp),
+            .background(PortfolioColors.BackgroundAlt)
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 40.dp, vertical = 128.dp),
     ) {
-        item {
-            Text(
-                text = "Experience",
-                style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-            Spacer(Modifier.height(2.dp))
-            Text(
-                text = "${experiences.size} positions",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Spacer(Modifier.height(24.dp))
-        }
+        // Section header
+        Text(
+            text = "EXPERIENCE",
+            style = MaterialTheme.typography.labelLarge,
+            color = PortfolioColors.Accent,
+        )
 
-        item {
-            Column {
-                experiences.forEachIndexed { index, experience ->
-                    ExperienceTimelineItem(
-                        experience = experience,
-                        isLast = index == experiences.lastIndex,
-                    )
+        Spacer(Modifier.height(16.dp))
+
+        Text(
+            text = "The Silent\nJourney.",
+            style = MaterialTheme.typography.displayMedium,
+            color = PortfolioColors.HeadingText,
+        )
+
+        Spacer(Modifier.height(80.dp))
+
+        // Timeline
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            experiences.forEachIndexed { index, experience ->
+                // Fading opacity: most recent = 1.0, oldest fades down
+                val opacity = when (index) {
+                    0 -> 1f
+                    1 -> 0.8f
+                    2 -> 0.6f
+                    3 -> 0.4f
+                    4 -> 0.3f
+                    5 -> 0.2f
+                    else -> 0.1f
+                }
+
+                TimelineItem(
+                    experience = experience,
+                    opacity = opacity,
+                    isFirst = index == 0,
+                    isLast = index == experiences.lastIndex,
+                )
+
+                if (index < experiences.lastIndex) {
+                    Spacer(Modifier.height(80.dp))
                 }
             }
         }
 
-        if (experiences.isEmpty()) {
-            item {
-                Text(
-                    text = "Add your experience to portfolio_data.json",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+        Spacer(Modifier.height(80.dp))
+
+        // Philosophy quote at bottom
+        HorizontalDivider(
+            color = PortfolioColors.Divider.copy(alpha = 0.1f),
+            thickness = 1.dp,
+        )
+
+        Spacer(Modifier.height(41.dp))
+
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.End,
+        ) {
+            Text(
+                text = "PHILOSOPHY",
+                style = MaterialTheme.typography.labelLarge,
+                color = PortfolioColors.Accent,
+                textAlign = TextAlign.End,
+            )
+            Spacer(Modifier.height(14.75.dp))
+            Text(
+                text = "Architecture is the learned game, correct and\nmagnificent, of forms assembled in the light.\nCode is no different.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = PortfolioColors.MetaText,
+                textAlign = TextAlign.End,
+            )
         }
     }
 }
 
 @Composable
-private fun ExperienceTimelineItem(
+private fun TimelineItem(
     experience: Experience,
+    opacity: Float,
+    isFirst: Boolean,
     isLast: Boolean,
 ) {
-    var expanded by remember { mutableStateOf(false) }
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(IntrinsicSize.Min),
-    ) {
-        // Timeline column — dot aligns with the role title text (~18dp from top of card)
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .width(28.dp)
-                .fillMaxHeight(),
+    Row(modifier = Modifier.fillMaxWidth()) {
+        // Timeline dot
+        Box(
+            modifier = Modifier.width(40.dp),
+            contentAlignment = Alignment.TopStart,
         ) {
-            // Push dot down to match card title baseline
-            Spacer(Modifier.height(20.dp))
-            Box(
-                modifier = Modifier
-                    .size(12.dp)
-                    .clip(CircleShape)
-                    .background(PortfolioColors.Primary),
-            )
-            if (!isLast) {
+            if (isFirst) {
+                // Active dot — glowing green
                 Box(
                     modifier = Modifier
-                        .width(2.dp)
-                        .weight(1f)
-                        .background(MaterialTheme.colorScheme.outlineVariant),
+                        .size(8.dp)
+                        .offset(y = 8.dp)
+                        .clip(CircleShape)
+                        .background(PortfolioColors.Accent),
+                )
+            } else {
+                // Inactive dot — gray
+                Box(
+                    modifier = Modifier
+                        .size(6.dp)
+                        .offset(y = 8.dp)
+                        .clip(CircleShape)
+                        .background(PortfolioColors.Divider.copy(alpha = 0.6f)),
                 )
             }
         }
 
-        Spacer(Modifier.width(12.dp))
-
+        // Content
         Column(
             modifier = Modifier
                 .weight(1f)
-                .padding(bottom = if (isLast) 0.dp else 16.dp),
+                .alpha(opacity),
         ) {
-            ElevatedCard(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.elevatedCardColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                ),
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    // Header row — always visible
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.Top,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = experience.role,
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface,
-                            )
-                            Spacer(Modifier.height(2.dp))
-                            Text(
-                                text = experience.company,
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Medium,
-                                color = PortfolioColors.Primary,
-                            )
-                            Spacer(Modifier.height(2.dp))
-                            Text(
-                                text = experience.duration,
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                        if (experience.achievements.isNotEmpty()) {
-                            IconButton(
-                                onClick = { expanded = !expanded },
-                                modifier = Modifier.size(32.dp),
-                            ) {
-                                Icon(
-                                    imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                                    contentDescription = if (expanded) "Collapse" else "Expand achievements",
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.size(18.dp),
-                                )
-                            }
-                        }
-                    }
+            // Role title
+            Text(
+                text = "${experience.company} - ${experience.role}",
+                style = MaterialTheme.typography.headlineSmall,
+                color = PortfolioColors.HeadingText,
+            )
 
-                    // Achievements — tap expand icon to reveal
-                    AnimatedVisibility(
-                        visible = expanded,
-                        enter = expandVertically(),
-                        exit = shrinkVertically(),
-                    ) {
-                        Column {
-                            HorizontalDivider(
-                                modifier = Modifier.padding(vertical = 10.dp),
-                                color = MaterialTheme.colorScheme.outlineVariant,
+            Spacer(Modifier.height(4.dp))
+
+            // Duration and location
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(
+                    text = experience.duration.uppercase(),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = PortfolioColors.MetaText,
+                )
+                if (experience.location.isNotEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .size(4.dp)
+                            .clip(CircleShape)
+                            .background(PortfolioColors.MetaText.copy(alpha = 0.3f)),
+                    )
+                }
+            }
+
+            if (experience.location.isNotEmpty()) {
+                Text(
+                    text = experience.location.uppercase(),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = PortfolioColors.MetaText,
+                )
+            }
+
+            // Achievements — dot separated editorial list
+            if (experience.achievements.isNotEmpty()) {
+                Spacer(Modifier.height(24.dp))
+                Column(verticalArrangement = Arrangement.spacedBy(11.75.dp)) {
+                    experience.achievements.forEach { achievement ->
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(24.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = achievement,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = PortfolioColors.AchievementText,
                             )
-                            experience.achievements.forEach { achievement ->
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(bottom = 6.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                ) {
-                                    // Bullet dot — aligned to first line of text
-                                    Box(
-                                        modifier = Modifier
-                                            .padding(top = 5.dp)
-                                            .size(5.dp)
-                                            .clip(CircleShape)
-                                            .background(PortfolioColors.Primary),
-                                    )
-                                    Text(
-                                        text = achievement,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier.weight(1f),
-                                    )
-                                }
-                            }
+                            Text(
+                                text = "•",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = PortfolioColors.Accent,
+                            )
                         }
                     }
                 }

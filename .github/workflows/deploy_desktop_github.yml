@@ -18,9 +18,8 @@ jobs:
         uses: actions/setup-java@v5
         with:
           java-version: '21'
-          distribution: 'jetbrains'
+          distribution: 'zulu'
           cache: 'gradle'
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Desktop Distribution
         run: ./gradlew :composeApp:packageReleaseDistributionForCurrentOS

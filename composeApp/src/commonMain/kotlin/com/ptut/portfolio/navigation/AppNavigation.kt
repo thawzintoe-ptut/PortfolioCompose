@@ -1,39 +1,48 @@
 package com.ptut.portfolio.navigation
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.Work
-import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Layers
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material.icons.outlined.Work
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.PermanentDrawerSheet
 import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ptut.portfolio.data.model.PortfolioData
+import com.ptut.portfolio.theme.PortfolioColors
 import com.ptut.portfolio.ui.about.AboutScreen
 import com.ptut.portfolio.ui.contact.ContactScreen
 import com.ptut.portfolio.ui.experience.ExperienceScreen
@@ -59,12 +68,12 @@ private data class NavItem(
 )
 
 private val navItems = listOf(
-    NavItem(Screen.Hero, "Home", Icons.Default.Home),
-    NavItem(Screen.About, "About", Icons.Default.Info),
-    NavItem(Screen.Skills, "Skills", Icons.Default.Build),
-    NavItem(Screen.Projects, "Projects", Icons.Default.Star),
-    NavItem(Screen.Experience, "Experience", Icons.Default.Work),
-    NavItem(Screen.Contact, "Contact", Icons.Default.Email),
+    NavItem(Screen.Hero, "Home", Icons.Outlined.Home),
+    NavItem(Screen.About, "About", Icons.Outlined.Person),
+    NavItem(Screen.Skills, "Skills", Icons.Outlined.Layers),
+    NavItem(Screen.Projects, "Projects", Icons.Outlined.Star),
+    NavItem(Screen.Experience, "Work", Icons.Outlined.Work),
+    NavItem(Screen.Contact, "Contact", Icons.Outlined.Email),
 )
 
 @Composable
@@ -135,46 +144,30 @@ fun AdaptivePortfolioApp(
 
     when (windowWidthClass) {
         WindowWidthClass.Compact -> {
-            Scaffold(
-                bottomBar = {
-                    NavigationBar {
-                        navItems.forEach { item ->
-                            NavigationBarItem(
-                                selected = currentRoute?.contains(item.screen::class.simpleName ?: "") == true,
-                                onClick = { navigate(item.screen) },
-                                icon = { Icon(item.icon, contentDescription = item.label) },
-                                label = {
-                                    Text(
-                                        text = item.label,
-                                        style = MaterialTheme.typography.labelSmall,
-                                        maxLines = 1,
-                                    )
-                                },
-                            )
-                        }
-                    }
-                },
-            ) { innerPadding ->
-                navHost(Modifier.padding(innerPadding))
+            Box(modifier = Modifier.fillMaxSize()) {
+                navHost(Modifier.fillMaxSize().padding(bottom = 64.dp))
+
+                // Minimal bottom nav — icon only, glassmorphic style
+                EditorialBottomBar(
+                    navItems = navItems,
+                    currentRoute = currentRoute,
+                    onNavigate = { navigate(it) },
+                    modifier = Modifier.align(Alignment.BottomCenter),
+                )
             }
         }
 
         WindowWidthClass.Medium -> {
             Scaffold { innerPadding ->
                 Row(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
-                    NavigationRail {
+                    NavigationRail(
+                        containerColor = PortfolioColors.Background,
+                    ) {
                         navItems.forEach { item ->
                             NavigationRailItem(
                                 selected = currentRoute?.contains(item.screen::class.simpleName ?: "") == true,
                                 onClick = { navigate(item.screen) },
-                                icon = { Icon(item.icon, contentDescription = item.label) },
-                                label = {
-                                    Text(
-                                        text = item.label,
-                                        style = MaterialTheme.typography.labelSmall,
-                                        maxLines = 1,
-                                    )
-                                },
+                                icon = { Icon(item.icon, contentDescription = item.label, tint = PortfolioColors.BodyText) },
                             )
                         }
                     }
@@ -186,17 +179,20 @@ fun AdaptivePortfolioApp(
         WindowWidthClass.Expanded -> {
             PermanentNavigationDrawer(
                 drawerContent = {
-                    PermanentDrawerSheet {
+                    PermanentDrawerSheet(
+                        drawerContainerColor = PortfolioColors.Background,
+                    ) {
                         navItems.forEach { item ->
                             NavigationDrawerItem(
                                 label = {
                                     Text(
                                         text = item.label,
-                                        style = MaterialTheme.typography.labelLarge,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = PortfolioColors.BodyText,
                                         maxLines = 1,
                                     )
                                 },
-                                icon = { Icon(item.icon, contentDescription = item.label) },
+                                icon = { Icon(item.icon, contentDescription = item.label, tint = PortfolioColors.BodyText) },
                                 selected = currentRoute?.contains(item.screen::class.simpleName ?: "") == true,
                                 onClick = { navigate(item.screen) },
                             )
@@ -211,11 +207,43 @@ fun AdaptivePortfolioApp(
 }
 
 @Composable
-private fun ComingSoon(name: String) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
+private fun EditorialBottomBar(
+    navItems: List<NavItem>,
+    currentRoute: String?,
+    onNavigate: (Any) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(64.dp)
+            .background(PortfolioColors.Background.copy(alpha = 0.85f))
+            .padding(horizontal = 48.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text("$name — Coming Soon")
+        navItems.forEach { item ->
+            val isSelected = currentRoute?.contains(item.screen::class.simpleName ?: "") == true
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.clickable { onNavigate(item.screen) },
+            ) {
+                Icon(
+                    imageVector = item.icon,
+                    contentDescription = item.label,
+                    tint = if (isSelected) PortfolioColors.Accent else PortfolioColors.BodyText,
+                    modifier = Modifier.size(20.dp),
+                )
+                if (isSelected) {
+                    Box(
+                        modifier = Modifier
+                            .padding(top = 4.dp)
+                            .size(4.dp)
+                            .clip(CircleShape)
+                            .background(PortfolioColors.Accent),
+                    )
+                }
+            }
+        }
     }
 }
