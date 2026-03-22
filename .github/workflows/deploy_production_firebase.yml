@@ -79,5 +79,4 @@ jobs:
         with:
           appId: ${{ steps.firebase.outputs.app_id }}
           serviceCredentialsFileContent: ${{ steps.firebase.outputs.cred }}
-          groups: testers
           file: composeApp-release.aab

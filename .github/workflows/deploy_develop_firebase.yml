@@ -27,7 +27,6 @@ jobs:
         with:
           appId: ${{ secrets.FIREBASE_ANDROID_APP_ID_DEV }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_DEV }}
-          groups: testers
           file: composeApp/build/outputs/apk/debug/composeApp-debug.apk
 
   # ── Android Staging ────────────────────────────────────────────────────
@@ -51,7 +50,6 @@ jobs:
         with:
           appId: ${{ secrets.FIREBASE_ANDROID_APP_ID_STAGING }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_STAGING }}
-          groups: testers
           file: composeApp/build/outputs/apk/debug/composeApp-debug.apk
 
   # ── iOS Dev ────────────────────────────────────────────────────────────
@@ -102,7 +100,6 @@ jobs:
         with:
           appId: ${{ secrets.FIREBASE_IOS_APP_ID_DEV }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_DEV }}
-          groups: testers
           file: ${{ runner.temp }}/ipa-dev/*.ipa
       - name: Upload iOS artifact
         if: always()
@@ -159,7 +156,6 @@ jobs:
         with:
           appId: ${{ secrets.FIREBASE_IOS_APP_ID_STAGING }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_STAGING }}
-          groups: testers
           file: ${{ runner.temp }}/ipa-staging/*.ipa
       - name: Upload iOS artifact
         if: always()

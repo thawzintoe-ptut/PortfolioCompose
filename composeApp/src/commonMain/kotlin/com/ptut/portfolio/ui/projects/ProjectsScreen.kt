@@ -1,9 +1,16 @@
 package com.ptut.portfolio.ui.projects
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,7 +22,13 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
@@ -35,6 +48,10 @@ fun ProjectsScreen(
     windowWidthClass: WindowWidthClass,
 ) {
     val projects = portfolioData?.projects ?: emptyList()
+    val uriHandler = LocalUriHandler.current
+
+    var visible by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { visible = true }
 
     Column(
         modifier = Modifier
@@ -45,40 +62,67 @@ fun ProjectsScreen(
             .padding(top = 128.dp, bottom = 160.dp),
     ) {
         // Section label
-        Text(
-            text = "PROJECTS",
-            style = MaterialTheme.typography.labelLarge,
-            color = PortfolioColors.Accent,
-        )
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(tween(600)),
+        ) {
+            Text(
+                text = "PROJECTS",
+                style = MaterialTheme.typography.labelLarge,
+                color = PortfolioColors.Accent,
+            )
+        }
 
         Spacer(Modifier.height(16.dp))
 
         // Editorial heading with italic "precision"
-        Text(
-            text = buildAnnotatedString {
-                append("Engineering\ndigital\nexperiences\nthrough\n")
-                withStyle(SpanStyle(fontStyle = FontStyle.Italic, fontFamily = FontFamily.Serif)) {
-                    append("precision")
-                }
-                append(".")
-            },
-            style = MaterialTheme.typography.displayMedium,
-            color = PortfolioColors.HeadingText,
-        )
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(tween(800, delayMillis = 100)) + slideInVertically(tween(800, delayMillis = 100)) { it / 4 },
+        ) {
+            Text(
+                text = buildAnnotatedString {
+                    append("Engineering\ndigital\nexperiences\nthrough\n")
+                    withStyle(SpanStyle(fontStyle = FontStyle.Italic, fontFamily = FontFamily.Serif)) {
+                        append("precision")
+                    }
+                    append(".")
+                },
+                style = MaterialTheme.typography.displayMedium,
+                color = PortfolioColors.HeadingText,
+            )
+        }
 
         Spacer(Modifier.height(64.dp))
 
-        // Project list
+        // Project list with staggered animation
         Column(verticalArrangement = Arrangement.spacedBy(96.dp)) {
-            projects.forEach { project ->
-                ProjectArticle(project = project)
+            projects.forEachIndexed { index, project ->
+                AnimatedVisibility(
+                    visible = visible,
+                    enter = fadeIn(tween(600, delayMillis = 300 + (index * 100))) +
+                            slideInVertically(tween(600, delayMillis = 300 + (index * 100))) { it / 6 },
+                ) {
+                    ProjectArticle(
+                        project = project,
+                        onSourceClick = {
+                            if (project.githubUrl.isNotEmpty()) {
+                                uriHandler.openUri(project.githubUrl)
+                            }
+                        },
+                    )
+                }
             }
         }
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun ProjectArticle(project: Project) {
+private fun ProjectArticle(
+    project: Project,
+    onSourceClick: () -> Unit = {},
+) {
     Column {
         // Project content
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -98,9 +142,9 @@ private fun ProjectArticle(project: Project) {
                 overflow = TextOverflow.Ellipsis,
             )
 
-            // Tags — monospace uppercase
+            // Tags — monospace uppercase with FlowRow for wrapping
             if (project.tags.isNotEmpty()) {
-                Row(
+                FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(24.dp),
                     modifier = Modifier.padding(top = 4.dp),
                 ) {
@@ -116,14 +160,19 @@ private fun ProjectArticle(project: Project) {
                 }
             }
 
-            // Source link
+            // Source link — clickable
             Text(
                 text = "SOURCE →",
                 style = MaterialTheme.typography.labelMedium.copy(
                     letterSpacing = 1.2.sp,
                 ),
                 color = PortfolioColors.Accent,
-                modifier = Modifier.padding(top = 12.dp),
+                modifier = Modifier
+                    .padding(top = 12.dp)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                    ) { onSourceClick() },
             )
         }
 

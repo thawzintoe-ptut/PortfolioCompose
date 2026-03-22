@@ -1,12 +1,15 @@
 package com.ptut.portfolio.ui.experience
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,12 +24,15 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ptut.portfolio.data.model.Experience
@@ -40,7 +46,9 @@ fun ExperienceScreen(
     windowWidthClass: WindowWidthClass,
 ) {
     val experiences = portfolioData?.experiences ?: emptyList()
-    val profile = portfolioData?.profile
+
+    var visible by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { visible = true }
 
     Column(
         modifier = Modifier
@@ -50,28 +58,37 @@ fun ExperienceScreen(
             .padding(horizontal = 40.dp, vertical = 128.dp),
     ) {
         // Section header
-        Text(
-            text = "EXPERIENCE",
-            style = MaterialTheme.typography.labelLarge,
-            color = PortfolioColors.Accent,
-        )
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(tween(600)),
+        ) {
+            Text(
+                text = "EXPERIENCE",
+                style = MaterialTheme.typography.labelLarge,
+                color = PortfolioColors.Accent,
+            )
+        }
 
         Spacer(Modifier.height(16.dp))
 
-        Text(
-            text = "The Silent\nJourney.",
-            style = MaterialTheme.typography.displayMedium,
-            color = PortfolioColors.HeadingText,
-        )
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(tween(800, delayMillis = 100)) + slideInVertically(tween(800, delayMillis = 100)) { it / 4 },
+        ) {
+            Text(
+                text = "The Silent\nJourney.",
+                style = MaterialTheme.typography.displayMedium,
+                color = PortfolioColors.HeadingText,
+            )
+        }
 
         Spacer(Modifier.height(80.dp))
 
-        // Timeline
+        // Timeline with staggered animations
         Column(
             modifier = Modifier.fillMaxWidth(),
         ) {
             experiences.forEachIndexed { index, experience ->
-                // Fading opacity: most recent = 1.0, oldest fades down
                 val opacity = when (index) {
                     0 -> 1f
                     1 -> 0.8f
@@ -82,15 +99,22 @@ fun ExperienceScreen(
                     else -> 0.1f
                 }
 
-                TimelineItem(
-                    experience = experience,
-                    opacity = opacity,
-                    isFirst = index == 0,
-                    isLast = index == experiences.lastIndex,
-                )
-
-                if (index < experiences.lastIndex) {
-                    Spacer(Modifier.height(80.dp))
+                AnimatedVisibility(
+                    visible = visible,
+                    enter = fadeIn(tween(600, delayMillis = 300 + (index * 80))) +
+                            slideInVertically(tween(600, delayMillis = 300 + (index * 80))) { it / 6 },
+                ) {
+                    Column {
+                        TimelineItem(
+                            experience = experience,
+                            opacity = opacity,
+                            isFirst = index == 0,
+                            isLast = index == experiences.lastIndex,
+                        )
+                        if (index < experiences.lastIndex) {
+                            Spacer(Modifier.height(80.dp))
+                        }
+                    }
                 }
             }
         }
@@ -98,30 +122,37 @@ fun ExperienceScreen(
         Spacer(Modifier.height(80.dp))
 
         // Philosophy quote at bottom
-        HorizontalDivider(
-            color = PortfolioColors.Divider.copy(alpha = 0.1f),
-            thickness = 1.dp,
-        )
-
-        Spacer(Modifier.height(41.dp))
-
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.End,
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(tween(800, delayMillis = 800)),
         ) {
-            Text(
-                text = "PHILOSOPHY",
-                style = MaterialTheme.typography.labelLarge,
-                color = PortfolioColors.Accent,
-                textAlign = TextAlign.End,
-            )
-            Spacer(Modifier.height(14.75.dp))
-            Text(
-                text = "Architecture is the learned game, correct and\nmagnificent, of forms assembled in the light.\nCode is no different.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = PortfolioColors.MetaText,
-                textAlign = TextAlign.End,
-            )
+            Column {
+                HorizontalDivider(
+                    color = PortfolioColors.Divider.copy(alpha = 0.1f),
+                    thickness = 1.dp,
+                )
+
+                Spacer(Modifier.height(41.dp))
+
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.End,
+                ) {
+                    Text(
+                        text = "PHILOSOPHY",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = PortfolioColors.Accent,
+                        textAlign = TextAlign.End,
+                    )
+                    Spacer(Modifier.height(14.75.dp))
+                    Text(
+                        text = "Architecture is the learned game, correct and\nmagnificent, of forms assembled in the light.\nCode is no different.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = PortfolioColors.MetaText,
+                        textAlign = TextAlign.End,
+                    )
+                }
+            }
         }
     }
 }
