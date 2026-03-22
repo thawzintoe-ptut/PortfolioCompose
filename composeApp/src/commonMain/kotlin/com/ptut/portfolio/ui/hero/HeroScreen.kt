@@ -1,35 +1,25 @@
 package com.ptut.portfolio.ui.hero
 
-import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.LightMode
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.SuggestionChip
-import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,21 +29,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.ptut.portfolio.data.model.PortfolioData
 import com.ptut.portfolio.theme.PortfolioColors
-import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun HeroScreen(
     portfolioData: PortfolioData?,
@@ -61,159 +43,197 @@ fun HeroScreen(
     onToggleTheme: () -> Unit,
     isDark: Boolean = true,
 ) {
+    val profile = portfolioData?.profile
+    val name = profile?.name ?: "Your Name"
+    val title = profile?.title ?: "Senior Software Engineer"
+    val subtitle = profile?.subtitle ?: ""
     val uriHandler = LocalUriHandler.current
-    val name = portfolioData?.profile?.name ?: "Your Name"
-    val title = portfolioData?.profile?.title ?: "Senior Software Engineer"
-    val subtitle = portfolioData?.profile?.subtitle ?: ""
-    val github = portfolioData?.profile?.github ?: ""
-    val linkedin = portfolioData?.profile?.linkedin ?: ""
 
-    val fullGreeting = "Hi, I'm $name"
-    var displayedText by remember { mutableStateOf("") }
-
-    LaunchedEffect(fullGreeting) {
-        displayedText = ""
-        for (i in fullGreeting.indices) {
-            displayedText = fullGreeting.substring(0, i + 1)
-            delay(60L)
-        }
-    }
-
-    val gradient = Brush.radialGradient(
-        colors = listOf(PortfolioColors.Surface, PortfolioColors.Background),
-        center = Offset(0f, 0f),
-        radius = 1200f,
-    )
+    var visible by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { visible = true }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(gradient),
+            .background(PortfolioColors.Background),
     ) {
-        // Theme toggle — top-right
-        IconButton(
-            onClick = onToggleTheme,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(16.dp),
-        ) {
-            Icon(
-                imageVector = if (isDark) Icons.Default.LightMode else Icons.Default.DarkMode,
-                contentDescription = "Toggle theme",
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
-        }
-
         Column(
             modifier = Modifier
-                .align(Alignment.Center)
-                .padding(horizontal = 32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 40.dp)
+                .padding(top = 80.dp),
+            verticalArrangement = Arrangement.Center,
         ) {
-            // Avatar with primary border ring
-            Box(
-                modifier = Modifier
-                    .size(128.dp)
-                    .clip(CircleShape)
-                    .border(3.dp, PortfolioColors.Primary, CircleShape)
-                    .background(MaterialTheme.colorScheme.surfaceVariant),
-                contentAlignment = Alignment.Center,
+            Spacer(Modifier.weight(1f))
+
+            // Large editorial name
+            AnimatedVisibility(
+                visible = visible,
+                enter = fadeIn(tween(800)) + slideInVertically(tween(800)) { it / 4 },
             ) {
-                Icon(
-                    imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "Profile photo",
-                    modifier = Modifier.size(100.dp),
-                    tint = PortfolioColors.Primary,
+                Text(
+                    text = name.replace(" ", "\n"),
+                    style = MaterialTheme.typography.displayLarge,
+                    color = PortfolioColors.HeadingText,
                 )
             }
 
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(24.dp))
 
-            // Typewriter greeting
-            AnimatedContent(
-                targetState = displayedText,
-                transitionSpec = { fadeIn(tween(80)) togetherWith fadeOut(tween(80)) },
-            ) { text ->
-                Text(
-                    text = buildAnnotatedString {
-                        val hiPart = "Hi, I'm "
-                        if (text.startsWith(hiPart)) {
-                            append(hiPart)
-                            withStyle(SpanStyle(color = PortfolioColors.Primary, fontWeight = FontWeight.ExtraBold)) {
-                                append(text.removePrefix(hiPart))
+            // Title
+            AnimatedVisibility(
+                visible = visible,
+                enter = fadeIn(tween(800, delayMillis = 200)) + slideInVertically(tween(800, delayMillis = 200)) { it / 4 },
+            ) {
+                Column {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = PortfolioColors.BodyText,
+                    )
+
+                    Spacer(Modifier.height(8.dp))
+
+                    // Subtitle — uppercase meta
+                    if (subtitle.isNotEmpty()) {
+                        Text(
+                            text = subtitle.uppercase(),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = PortfolioColors.MutedText,
+                        )
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(64.dp))
+
+            // CTA links — editorial underlined style
+            AnimatedVisibility(
+                visible = visible,
+                enter = fadeIn(tween(800, delayMillis = 400)) + slideInVertically(tween(800, delayMillis = 400)) { it / 4 },
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(32.dp)) {
+                    Text(
+                        text = "View Projects →",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = PortfolioColors.Accent,
+                        textDecoration = TextDecoration.Underline,
+                        modifier = Modifier.clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                        ) { onViewProjects() },
+                    )
+                    Text(
+                        text = "Download Resume ↓",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = PortfolioColors.BodyText,
+                        textDecoration = TextDecoration.Underline,
+                        modifier = Modifier.clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                        ) {
+                            // Open resume URL
+                            profile?.let {
+                                uriHandler.openUri("https://github.com/${it.github}")
                             }
-                        } else {
-                            append(text)
-                        }
-                    },
-                    style = MaterialTheme.typography.headlineLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    textAlign = TextAlign.Center,
-                )
+                        },
+                    )
+                }
             }
 
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge,
-                color = PortfolioColors.Secondary,
-                textAlign = TextAlign.Center,
-            )
+            Spacer(Modifier.weight(1f))
 
-            if (subtitle.isNotEmpty()) {
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                )
-            }
-
-            Spacer(Modifier.height(4.dp))
-
-            // CTA buttons — FlowRow so they wrap on small screens
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+            // Footer — social links
+            AnimatedVisibility(
+                visible = visible,
+                enter = fadeIn(tween(800, delayMillis = 600)),
             ) {
-                Button(
-                    onClick = onViewProjects,
-                    colors = ButtonDefaults.buttonColors(containerColor = PortfolioColors.Primary),
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(bottom = 80.dp),
                 ) {
-                    Text("View Projects")
-                }
-                OutlinedButton(onClick = { /* TODO: Download Resume */ }) {
-                    Text("Download Resume")
+                    Text(
+                        text = "github",
+                        style = MaterialTheme.typography.labelMedium.copy(
+                            letterSpacing = 1.2.sp,
+                        ),
+                        color = PortfolioColors.MutedText,
+                        modifier = Modifier.clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                        ) {
+                            profile?.let { uriHandler.openUri("https://github.com/${it.github}") }
+                        },
+                    )
+                    Text(
+                        text = "·",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = PortfolioColors.MutedText,
+                    )
+                    Text(
+                        text = "linkedin",
+                        style = MaterialTheme.typography.labelMedium.copy(
+                            letterSpacing = 1.2.sp,
+                        ),
+                        color = PortfolioColors.MutedText,
+                        modifier = Modifier.clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                        ) {
+                            profile?.let { uriHandler.openUri("https://linkedin.com/in/${it.linkedin}") }
+                        },
+                    )
                 }
             }
+        }
 
-            // Social link chips
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                if (github.isNotEmpty()) {
-                    SuggestionChip(
-                        onClick = { uriHandler.openUri(github) },
-                        label = { Text("GitHub", style = MaterialTheme.typography.labelMedium) },
-                        colors = SuggestionChipDefaults.suggestionChipColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            labelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        ),
-                    )
-                }
-                if (linkedin.isNotEmpty()) {
-                    SuggestionChip(
-                        onClick = { uriHandler.openUri(linkedin) },
-                        label = { Text("LinkedIn", style = MaterialTheme.typography.labelMedium) },
-                        colors = SuggestionChipDefaults.suggestionChipColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                            labelColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                        ),
-                    )
-                }
-            }
+        // Top bar
+        TopBar(
+            name = name,
+            onToggleTheme = onToggleTheme,
+            isDark = isDark,
+        )
+    }
+}
+
+@Composable
+private fun TopBar(
+    name: String,
+    onToggleTheme: () -> Unit,
+    isDark: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 40.dp, vertical = 32.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = name.uppercase(),
+            style = MaterialTheme.typography.labelMedium.copy(
+                letterSpacing = 4.sp,
+                fontSize = 12.sp,
+            ),
+            color = PortfolioColors.Accent,
+        )
+        Box(
+            modifier = Modifier
+                .size(32.dp)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                ) { onToggleTheme() },
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = if (isDark) "☾" else "☀",
+                style = MaterialTheme.typography.bodySmall,
+                color = PortfolioColors.HeadingText,
+            )
         }
     }
 }

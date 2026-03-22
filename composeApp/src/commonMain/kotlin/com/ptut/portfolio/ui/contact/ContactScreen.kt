@@ -1,34 +1,28 @@
 package com.ptut.portfolio.ui.contact
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.OpenInNew
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Link
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.ptut.portfolio.data.model.PortfolioData
 import com.ptut.portfolio.theme.PortfolioColors
@@ -42,127 +36,103 @@ fun ContactScreen(
     val profile = portfolioData?.profile
     val uriHandler = LocalUriHandler.current
 
-    LazyColumn(
+    var visible by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { visible = true }
+
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp, vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+            .background(PortfolioColors.BackgroundAlt)
+            .padding(horizontal = 40.dp),
+        verticalArrangement = Arrangement.Center,
     ) {
-        item {
+        // Section label
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(tween(600)),
+        ) {
             Text(
-                text = "Contact",
+                text = "CONTACT",
+                style = MaterialTheme.typography.labelLarge,
+                color = PortfolioColors.Accent,
+            )
+        }
+
+        Spacer(Modifier.height(16.dp))
+
+        // Heading
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(tween(800, delayMillis = 100)) + slideInVertically(tween(800, delayMillis = 100)) { it / 4 },
+        ) {
+            Text(
+                text = "Let's connect.",
                 style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.onBackground,
+                color = PortfolioColors.HeadingText,
             )
         }
 
-        item {
-            Text(
-                text = "Let's build something great together.",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = PortfolioColors.Primary,
-            )
-            Spacer(Modifier.height(4.dp))
-            Text(
-                text = "Reach out via any of the channels below.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
+        Spacer(Modifier.height(80.dp))
 
-        item {
-            ElevatedCard(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.elevatedCardColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                ),
-            ) {
-                Column {
-                    val items = buildList {
-                        profile?.email?.takeIf { it.isNotEmpty() && !it.startsWith("TODO") }?.let {
-                            add(Triple(Icons.Default.Email, "Email", it) to { uriHandler.openUri("mailto:$it") })
-                        }
-                        profile?.github?.takeIf { it.isNotEmpty() }?.let {
-                            add(Triple(Icons.Default.Link, "GitHub", it) to { uriHandler.openUri(it) })
-                        }
-                        profile?.linkedin?.takeIf { it.isNotEmpty() }?.let {
-                            add(Triple(Icons.Default.Person, "LinkedIn", it) to { uriHandler.openUri(it) })
-                        }
-                    }
+        // Contact links — editorial style
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(tween(800, delayMillis = 300)) + slideInVertically(tween(800, delayMillis = 300)) { it / 6 },
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(56.dp)) {
+                // Email
+                ContactLink(
+                    label = "Email",
+                    value = "${profile?.email ?: "email@example.com"} →",
+                    onClick = {
+                        profile?.let { uriHandler.openUri("mailto:${it.email}") }
+                    },
+                )
 
-                    if (items.isEmpty()) {
-                        Text(
-                            text = "Add your contact info to portfolio_data.json",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(20.dp),
-                        )
-                    }
+                // GitHub
+                ContactLink(
+                    label = "GitHub",
+                    value = "${profile?.github ?: "thawzintoe-ptut"} →",
+                    onClick = {
+                        profile?.let { uriHandler.openUri("https://github.com/${it.github}") }
+                    },
+                )
 
-                    items.forEachIndexed { index, (iconLabelValue, action) ->
-                        val (icon, label, value) = iconLabelValue
-                        ContactListItem(
-                            icon = icon,
-                            label = label,
-                            value = value,
-                            onAction = action,
-                            actionDescription = "Open $label",
-                        )
-                        if (index < items.lastIndex) {
-                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                        }
-                    }
-                }
+                // LinkedIn
+                ContactLink(
+                    label = "LinkedIn",
+                    value = "${profile?.linkedin ?: "thaw-zin-toe"} →",
+                    onClick = {
+                        profile?.let { uriHandler.openUri("https://linkedin.com/in/${it.linkedin}") }
+                    },
+                )
             }
         }
-
-        item { Spacer(Modifier.height(8.dp)) }
     }
 }
 
 @Composable
-private fun ContactListItem(
-    icon: ImageVector,
+private fun ContactLink(
     label: String,
     value: String,
-    onAction: () -> Unit,
-    actionDescription: String,
+    onClick: () -> Unit = {},
 ) {
-    ListItem(
-        headlineContent = {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-        },
-        supportingContent = {
-            Text(
-                text = value,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        },
-        leadingContent = {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = PortfolioColors.Primary,
-            )
-        },
-        trailingContent = {
-            IconButton(onClick = onAction) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.OpenInNew,
-                    contentDescription = actionDescription,
-                    tint = PortfolioColors.Primary,
-                )
-            }
-        },
-        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-    )
+    Column(
+        verticalArrangement = Arrangement.spacedBy(7.75.dp),
+        modifier = Modifier.clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null,
+        ) { onClick() },
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium,
+            color = PortfolioColors.MetaText,
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyLarge,
+            color = PortfolioColors.Accent,
+        )
+    }
 }

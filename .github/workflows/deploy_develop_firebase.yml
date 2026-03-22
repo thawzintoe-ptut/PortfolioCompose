@@ -15,10 +15,9 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          distribution: 'jetbrains'
+          distribution: 'zulu'
           java-version: '21'
           cache: 'gradle'
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Set up Google Services JSON
         run: echo "${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON_DEV }}" | base64 -d > composeApp/google-services.json
       - name: Build debug APK
@@ -28,7 +27,6 @@ jobs:
         with:
           appId: ${{ secrets.FIREBASE_ANDROID_APP_ID_DEV }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_DEV }}
-          groups: testers
           file: composeApp/build/outputs/apk/debug/composeApp-debug.apk
 
   # ── Android Staging ────────────────────────────────────────────────────
@@ -40,10 +38,9 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          distribution: 'jetbrains'
+          distribution: 'zulu'
           java-version: '21'
           cache: 'gradle'
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Set up Google Services JSON
         run: echo "${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON_STAGING }}" | base64 -d > composeApp/google-services.json
       - name: Build debug APK
@@ -53,7 +50,6 @@ jobs:
         with:
           appId: ${{ secrets.FIREBASE_ANDROID_APP_ID_STAGING }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_STAGING }}
-          groups: testers
           file: composeApp/build/outputs/apk/debug/composeApp-debug.apk
 
   # ── iOS Dev ────────────────────────────────────────────────────────────
@@ -65,10 +61,9 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          distribution: 'jetbrains'
+          distribution: 'zulu'
           java-version: '21'
           cache: 'gradle'
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Cache Kotlin Native (Konan)
         uses: actions/cache@v5
         with:
@@ -105,7 +100,6 @@ jobs:
         with:
           appId: ${{ secrets.FIREBASE_IOS_APP_ID_DEV }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_DEV }}
-          groups: testers
           file: ${{ runner.temp }}/ipa-dev/*.ipa
       - name: Upload iOS artifact
         if: always()
@@ -123,10 +117,9 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          distribution: 'jetbrains'
+          distribution: 'zulu'
           java-version: '21'
           cache: 'gradle'
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Cache Kotlin Native (Konan)
         uses: actions/cache@v5
         with:
@@ -163,7 +156,6 @@ jobs:
         with:
           appId: ${{ secrets.FIREBASE_IOS_APP_ID_STAGING }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_DISTRIBUTION_CREDENTIAL_JSON_STAGING }}
-          groups: testers
           file: ${{ runner.temp }}/ipa-staging/*.ipa
       - name: Upload iOS artifact
         if: always()
@@ -181,10 +173,9 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          distribution: 'jetbrains'
+          distribution: 'zulu'
           java-version: '21'
           cache: 'gradle'
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Desktop (DMG)
         run: ./gradlew :composeApp:packageDistributionForCurrentOS -Pflavor=dev
       # TODO: Uncomment when Firebase Desktop App ID is configured
@@ -210,10 +201,9 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          distribution: 'jetbrains'
+          distribution: 'zulu'
           java-version: '21'
           cache: 'gradle'
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Desktop (DMG)
         run: ./gradlew :composeApp:packageDistributionForCurrentOS -Pflavor=staging
       # TODO: Uncomment when Firebase Desktop App ID is configured
@@ -239,10 +229,9 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          distribution: 'jetbrains'
+          distribution: 'zulu'
           java-version: '21'
           cache: 'gradle'
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Web (Wasm)
         run: ./gradlew :composeApp:wasmJsBrowserDistribution -Pflavor=dev
       - name: Deploy to Firebase Hosting
@@ -267,10 +256,9 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          distribution: 'jetbrains'
+          distribution: 'zulu'
           java-version: '21'
           cache: 'gradle'
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Web (Wasm)
         run: ./gradlew :composeApp:wasmJsBrowserDistribution -Pflavor=staging
       - name: Deploy to Firebase Hosting

@@ -19,9 +19,8 @@ jobs:
         uses: actions/setup-java@v5
         with:
           java-version: '21'
-          distribution: 'jetbrains'
+          distribution: 'zulu'
           cache: 'gradle'
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run Common Unit Tests
         run: ./gradlew :composeApp:allTests
 
@@ -35,9 +34,8 @@ jobs:
         uses: actions/setup-java@v5
         with:
           java-version: '21'
-          distribution: 'jetbrains'
+          distribution: 'zulu'
           cache: 'gradle'
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Debug APK
         run: ./gradlew :composeApp:assembleDebug
 
@@ -51,9 +49,8 @@ jobs:
         uses: actions/setup-java@v5
         with:
           java-version: '21'
-          distribution: 'jetbrains'
+          distribution: 'zulu'
           cache: 'gradle'
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Cache Kotlin Native
         uses: actions/cache@v5
         with:
@@ -72,9 +69,8 @@ jobs:
         uses: actions/setup-java@v5
         with:
           java-version: '21'
-          distribution: 'jetbrains'
+          distribution: 'zulu'
           cache: 'gradle'
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build JVM Resources
         run: ./gradlew :composeApp:jvmProcessResources
 
@@ -88,8 +84,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           java-version: '21'
-          distribution: 'jetbrains'
+          distribution: 'zulu'
           cache: 'gradle'
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Web (Wasm)
         run: ./gradlew :composeApp:wasmJsBrowserDistribution

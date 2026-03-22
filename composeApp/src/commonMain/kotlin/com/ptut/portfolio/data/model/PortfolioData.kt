@@ -11,6 +11,7 @@ data class Profile(
     val email: String,
     val github: String,
     val linkedin: String,
+    val philosophy: String = "",
 )
 
 @Serializable
@@ -44,6 +45,7 @@ data class Experience(
     val company: String,
     val role: String,
     val duration: String,
+    val location: String = "",
     val achievements: List<String>,
 )
 

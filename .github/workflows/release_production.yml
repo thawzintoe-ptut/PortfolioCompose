@@ -29,9 +29,8 @@ jobs:
         uses: actions/setup-java@v5
         with:
           java-version: '21'
-          distribution: 'jetbrains'
+          distribution: 'zulu'
           cache: 'gradle'
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Update build version
         if: inputs.versionName != ''
         run: |
@@ -77,9 +76,8 @@ jobs:
         uses: actions/setup-java@v5
         with:
           java-version: '21'
-          distribution: 'jetbrains'
+          distribution: 'zulu'
           cache: 'gradle'
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Update build version
         if: inputs.versionName != ''
         run: |
@@ -110,9 +108,8 @@ jobs:
         uses: actions/setup-java@v5
         with:
           java-version: '21'
-          distribution: 'jetbrains'
+          distribution: 'zulu'
           cache: 'gradle'
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Update build version
         if: inputs.versionName != ''
         run: |
@@ -145,9 +142,8 @@ jobs:
         uses: actions/setup-java@v5
         with:
           java-version: '21'
-          distribution: 'jetbrains'
+          distribution: 'zulu'
           cache: 'gradle'
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Cache Kotlin Native (Konan)
         uses: actions/cache@v5
         with:

@@ -1,6 +1,12 @@
 package com.ptut.portfolio.ui.about
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,17 +14,25 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.ptut.portfolio.data.model.PortfolioData
 import com.ptut.portfolio.data.model.Stat
 import com.ptut.portfolio.theme.PortfolioColors
@@ -32,106 +46,193 @@ fun AboutScreen(
     val profile = portfolioData?.profile
     val stats = portfolioData?.stats ?: emptyList()
 
-    LazyColumn(
+    var visible by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { visible = true }
+
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp, vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
+            .background(PortfolioColors.Background)
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 40.dp, vertical = 128.dp),
     ) {
-        item {
+        // Section label
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(tween(600)),
+        ) {
             Text(
-                text = "About Me",
-                style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.onBackground,
+                text = "ABOUT",
+                style = MaterialTheme.typography.labelLarge,
+                color = PortfolioColors.Accent,
             )
         }
 
-        // Bio card
-        item {
-            ElevatedCard(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.elevatedCardColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
+        Spacer(Modifier.height(16.dp))
+
+        // Editorial heading
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(tween(800, delayMillis = 100)) + slideInVertically(tween(800, delayMillis = 100)) { it / 4 },
+        ) {
+            Text(
+                text = "The Silent\nArchitect.",
+                style = MaterialTheme.typography.displayLarge.copy(
+                    letterSpacing = (-3.6).sp,
                 ),
-            ) {
-                Text(
-                    text = profile?.bio ?: "Add your bio in portfolio_data.json",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(20.dp),
-                )
+                color = PortfolioColors.HeadingText,
+            )
+        }
+
+        Spacer(Modifier.height(48.dp))
+
+        // Bio
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(tween(800, delayMillis = 250)),
+        ) {
+            Text(
+                text = profile?.bio ?: "",
+                style = MaterialTheme.typography.bodyLarge,
+                color = PortfolioColors.BodyText,
+            )
+        }
+
+        Spacer(Modifier.height(48.dp))
+
+        // Stats — vertical layout
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(tween(800, delayMillis = 400)) + slideInVertically(tween(800, delayMillis = 400)) { it / 6 },
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(48.dp)) {
+                stats.forEach { stat ->
+                    StatItem(stat)
+                }
             }
         }
 
-        // Stats section — always a horizontal row regardless of window size
-        if (stats.isNotEmpty()) {
-            item {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        Spacer(Modifier.height(48.dp))
+
+        // Philosophy bento card — editorial layout with left border accent
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(tween(800, delayMillis = 550)),
+        ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                // Philosophy text card with left border
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(256.dp)
+                        .background(PortfolioColors.Surface),
+                ) {
+                    // Left accent border
+                    Box(
+                        modifier = Modifier
+                            .width(1.dp)
+                            .height(256.dp)
+                            .background(PortfolioColors.Divider.copy(alpha = 0.1f)),
+                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 33.dp, vertical = 32.dp),
+                        verticalArrangement = Arrangement.Bottom,
                     ) {
-                        HorizontalDivider(
-                            modifier = Modifier.weight(1f),
-                            color = PortfolioColors.Primary.copy(alpha = 0.4f),
-                        )
                         Text(
-                            text = "At a Glance",
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.SemiBold,
-                            color = PortfolioColors.Primary,
+                            text = "PHILOSOPHY",
+                            style = MaterialTheme.typography.labelLarge.copy(
+                                letterSpacing = 1.1.sp,
+                                fontSize = 11.sp,
+                            ),
+                            color = PortfolioColors.Accent,
                         )
-                        HorizontalDivider(
-                            modifier = Modifier.weight(1f),
-                            color = PortfolioColors.Primary.copy(alpha = 0.4f),
+                        Spacer(Modifier.height(8.dp))
+                        Text(
+                            text = "\"${profile?.philosophy ?: "Code is temporary, engineering integrity is permanent."}\"",
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                fontWeight = FontWeight.Light,
+                                lineHeight = 20.sp,
+                            ),
+                            color = PortfolioColors.AchievementText,
                         )
                     }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                }
+
+                // Code pattern background — desaturated editorial element
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(256.dp)
+                        .background(PortfolioColors.Surface)
+                        .alpha(0.4f),
+                ) {
+                    // Simulated code lines for editorial effect
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(24.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp),
                     ) {
-                        stats.forEach { stat ->
-                            StatCard(stat = stat, modifier = Modifier.weight(1f))
+                        val codeLines = listOf(
+                            "fun buildArchitecture() {",
+                            "    val layers = listOf(",
+                            "        Domain, Data, Presentation",
+                            "    )",
+                            "    layers.forEach { layer ->",
+                            "        layer.implement(",
+                            "            principles = SOLID,",
+                            "            pattern = CleanArch",
+                            "        )",
+                            "    }",
+                            "}",
+                            "",
+                            "suspend fun deliver() {",
+                            "    withContext(Quality) {",
+                            "        ship(precision = true)",
+                            "    }",
+                            "}",
+                        )
+                        codeLines.forEach { line ->
+                            Text(
+                                text = line,
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontFamily = FontFamily.Monospace,
+                                    fontSize = 11.sp,
+                                    lineHeight = 16.sp,
+                                ),
+                                color = PortfolioColors.Accent.copy(alpha = 0.6f),
+                            )
                         }
                     }
                 }
             }
         }
 
-        // Certifications / awards teaser (expandable in future weeks)
-        item { Spacer(Modifier.height(8.dp)) }
+        Spacer(Modifier.height(80.dp))
+
+        // Divider
+        HorizontalDivider(
+            color = PortfolioColors.Divider.copy(alpha = 0.2f),
+            thickness = 0.5.dp,
+        )
     }
 }
 
 @Composable
-private fun StatCard(
-    stat: Stat,
-    modifier: Modifier = Modifier,
-) {
-    ElevatedCard(
-        modifier = modifier,
-        colors = CardDefaults.elevatedCardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-        ),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp, horizontal = 8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                text = stat.value,
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.ExtraBold,
-                color = PortfolioColors.Primary,
-            )
-            Spacer(Modifier.height(4.dp))
-            Text(
-                text = stat.label,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
+private fun StatItem(stat: Stat) {
+    Column {
+        Text(
+            text = stat.value,
+            style = MaterialTheme.typography.headlineLarge,
+            color = PortfolioColors.Accent,
+        )
+        Spacer(Modifier.height(4.dp))
+        Text(
+            text = stat.label.uppercase(),
+            style = MaterialTheme.typography.labelMedium,
+            color = PortfolioColors.BodyText,
+        )
     }
 }
